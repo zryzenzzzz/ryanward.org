@@ -61,7 +61,6 @@
             transform: translate(-50%, -50%);
             font-size: clamp(2rem, 6vw, 4rem);
             font-weight: 700;
-            /* Modified text styles per request: Solid Blue, Drop Shadow, No Gradient */
             color: #0078d4;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             background: none;
@@ -116,7 +115,6 @@
             transform: translate(-50%, -50%);
             font-size: 0.65rem;
             font-weight: 600;
-            /* Match the desktop style */
             color: #0078d4;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
             background: none;
@@ -192,6 +190,7 @@
             position: relative;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             z-index: 1000;
+            transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 200ms ease;
         }
 
         .taskbar-center {
@@ -301,7 +300,7 @@
             border-radius: 0;
             animation: none;
         }
-        
+
         /* Hide resizers when maximized */
         .window.maximized .resizer {
             display: none;
@@ -413,7 +412,6 @@
             position: absolute;
             bottom: 56px;
             left: 50%;
-            /* Enhanced slide up animation properties */
             transform: translateX(-50%) translateY(120%);
             width: 640px;
             max-width: calc(100vw - 24px);
@@ -427,7 +425,7 @@
             padding: 32px 40px;
             opacity: 0;
             z-index: 999;
-            pointer-events: none; /* Disable clicks when hidden */
+            pointer-events: none;
             transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease;
         }
 
@@ -673,6 +671,7 @@
             transition: all 0.15s;
             border: 3px solid transparent;
             overflow: hidden;
+            position: relative;
         }
 
         .wallpaper-option:hover {
@@ -713,7 +712,7 @@
             opacity: 0.5;
             margin-top: 16px;
         }
-        
+
         /* Texter App */
         .texter-app {
             background: #202020;
@@ -798,12 +797,151 @@
             background: white;
         }
 
+        /* Liquid Glass Button (Apple-like) */
+        .liquid-glass-btn {
+            position: fixed;
+            right: 18px;
+            bottom: 64px; /* above the taskbar */
+            z-index: 3000;
+            height: 46px;
+            width: 240px; /* set precisely by JS */
+            padding: 0 18px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            color: rgba(255,255,255,0.95);
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+            box-shadow:
+                0 18px 50px rgba(0,0,0,0.45),
+                inset 0 1px 0 rgba(255,255,255,0.35);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            overflow: hidden;
+            transition:
+                width 320ms cubic-bezier(0.19, 1, 0.22, 1),
+                transform 160ms cubic-bezier(0.2, 0.9, 0.2, 1),
+                box-shadow 200ms ease,
+                border-color 200ms ease;
+        }
+
+        .liquid-glass-btn:active {
+            transform: translateY(1px) scale(0.99);
+        }
+
+        .liquid-glass-btn:hover {
+            box-shadow:
+                0 22px 70px rgba(0,0,0,0.55),
+                inset 0 1px 0 rgba(255,255,255,0.45);
+            border-color: rgba(255,255,255,0.32);
+        }
+
+        .liquid-glass-btn:focus-visible {
+            outline: 2px solid rgba(96,205,255,0.85);
+            outline-offset: 3px;
+        }
+
+        .liquid-glass-btn .lg-icon {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 auto;
+            opacity: 0.95;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+            position: relative;
+            z-index: 2;
+        }
+
+        .liquid-glass-btn .lg-text {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.45);
+        }
+
+        /* fluid layers */
+        .liquid-glass-btn::before {
+            content: "";
+            position: absolute;
+            inset: -60% -40%;
+            background:
+                radial-gradient(closest-side at 25% 35%, rgba(255,255,255,0.55), rgba(255,255,255,0) 62%),
+                radial-gradient(closest-side at 70% 80%, rgba(96,205,255,0.22), rgba(96,205,255,0) 60%);
+            transform: translate(-10%, -10%) rotate(8deg);
+            filter: blur(2px);
+            opacity: 0.9;
+            animation: liquidSweep 7s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+        }
+
+        .liquid-glass-btn::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg,
+                rgba(255,255,255,0.0) 0%,
+                rgba(255,255,255,0.22) 20%,
+                rgba(255,255,255,0.0) 45%,
+                rgba(96,205,255,0.16) 70%,
+                rgba(255,255,255,0.0) 100%);
+            background-size: 220% 220%;
+            opacity: 0.55;
+            mix-blend-mode: overlay;
+            animation: liquidShimmer 3.2s linear infinite;
+        }
+
+        @keyframes liquidSweep {
+            0% { transform: translate(-14%, -18%) rotate(8deg) scale(1.02); }
+            50% { transform: translate(10%, 6%) rotate(-6deg) scale(1.04); }
+            100% { transform: translate(-14%, -18%) rotate(8deg) scale(1.02); }
+        }
+
+        @keyframes liquidShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        body.full-resume-open .liquid-glass-btn {
+            bottom: 18px;
+        }
+
+        /* Full resume mode */
+        body.full-resume-open .taskbar {
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #resumeWindow.full-resume-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+
+        #resumeWindow.full-resume-mode .window-titlebar,
+        #resumeWindow.full-resume-mode .resizer {
+            display: none !important;
+        }
+
+        #resumeWindow.full-resume-mode .window-content {
+            background: #f3f3f3;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .desktop-icons {
                 grid-template-columns: repeat(auto-fill, 80px);
             }
-            
+
             .desktop-icon {
                 width: 76px;
             }
@@ -865,7 +1003,7 @@
             .calc-result {
                 font-size: 32px;
             }
-            
+
             .texter-input {
                 font-size: 48px;
             }
@@ -902,7 +1040,6 @@
 
         /* PHONE/SMALL-SCREEN MODE: Show only the Resume full page */
         @media (max-width: 1024px) {
-            /* Hide all desktop UI and extras */
             .taskbar,
             .desktop-icons,
             .start-menu,
@@ -914,11 +1051,11 @@
             #settingsWindow,
             .desktop::before,
             .desktop::after,
-            .desktop-url {
+            .desktop-url,
+            .liquid-glass-btn {
                 display: none !important;
             }
 
-            /* Make resume window full screen */
             #resumeWindow {
                 display: flex !important;
                 position: fixed !important;
@@ -941,7 +1078,6 @@
                 overflow: auto !important;
                 height: 100vh !important;
             }
-            /* Tighter resume padding on phones */
             .resume-content { padding: 16px !important; }
             .resume-container { padding: 20px !important; box-shadow: none !important; }
         }
@@ -1014,7 +1150,7 @@
                 </div>
                 <span>Clock</span>
             </div>
-            
+
             <div class="desktop-icon" ondblclick="openWindow('texter')">
                 <div class="icon">
                     <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1317,7 +1453,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Texter Window -->
         <div class="window" id="texterWindow" data-app="texter" style="width: 600px; height: 400px; top: 100px; left: 300px;">
             <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
@@ -1368,7 +1504,6 @@
                 </div>
             </div>
             <div class="window-content" style="overflow: hidden;">
-                <!-- Using igu=1 for better iframe compatibility with Google, fallback to Bing if blocked -->
                 <iframe id="googleFrame" src="https://www.google.com/webhp?igu=1" class="google-app-frame"></iframe>
             </div>
         </div>
@@ -1493,6 +1628,16 @@
         </div>
     </div>
 
+    <!-- Liquid Glass Resume Toggle Button -->
+    <button id="fullResumeBtn" class="liquid-glass-btn" type="button" aria-expanded="false" aria-label="Show Full Resume">
+        <svg class="lg-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 3h7l3 3v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" fill="rgba(255,255,255,0.92)"/>
+            <path d="M14 3v3h3" fill="rgba(0,0,0,0.18)"/>
+            <path d="M8 11h8M8 14h8M8 17h5" stroke="rgba(0,0,0,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span id="fullResumeBtnText" class="lg-text">Show Full Resume</span>
+    </button>
+
     <!-- Taskbar -->
     <div class="taskbar">
         <div class="taskbar-center">
@@ -1557,7 +1702,10 @@
 
         let activeWindow = null;
         let zIndex = 100;
-        
+
+        // Full resume toggle state
+        let fullResumeOpen = false;
+
         // Capture default size/position for each window so they always open the same way
         function captureWindowDefaults() {
             for (const app in windows) {
@@ -1584,11 +1732,9 @@
             const el = document.getElementById(state.window);
             const defs = state.default || {};
 
-            // Ensure not maximized/closing
-            el.classList.remove('maximized', 'closing');
+            el.classList.remove('maximized', 'closing', 'full-resume-mode');
             state.isMaximized = false;
 
-            // Restore geometry
             if (defs) {
                 el.style.width = defs.width || el.style.width;
                 el.style.height = defs.height || el.style.height;
@@ -1596,7 +1742,6 @@
                 el.style.left = defs.left || el.style.left;
             }
 
-            // Reset scroll position inside content pane
             const content = el.querySelector('.window-content');
             if (content) content.scrollTop = 0;
         }
@@ -1609,7 +1754,6 @@
             document.getElementById('taskbarTime').textContent = timeStr;
             document.getElementById('taskbarDate').textContent = dateStr;
 
-            // Clock app
             const clockTime = document.getElementById('clockAppTime');
             const clockDate = document.getElementById('clockAppDate');
             const clockSeconds = document.getElementById('clockAppSeconds');
@@ -1621,12 +1765,12 @@
         }
         updateClock();
         setInterval(updateClock, 1000);
-        
+
         // Texter App Logic
         function updateTexterSize(el) {
             const text = el.innerText;
             const length = text.length;
-            
+
             let size = 80;
             if (length > 15) size = 60;
             if (length > 35) size = 48;
@@ -1634,7 +1778,7 @@
             if (length > 140) size = 24;
             if (length > 280) size = 18;
             if (length > 500) size = 14;
-            
+
             el.style.fontSize = size + 'px';
         }
 
@@ -1642,8 +1786,7 @@
         function toggleStartMenu() {
             const startMenu = document.getElementById('startMenu');
             startMenu.classList.toggle('active');
-            
-            // If opening, clear search
+
             if (startMenu.classList.contains('active')) {
                 const searchInput = document.querySelector('.start-menu-search');
                 searchInput.value = '';
@@ -1668,10 +1811,8 @@
                 if (query.trim() !== '') {
                     openWindow('google');
                     const frame = document.getElementById('googleFrame');
-                    // Try to use Google's pseudo-embeddable URL, or fall back to Bing if blocking occurs
                     frame.src = "https://www.google.com/search?igu=1&q=" + encodeURIComponent(query);
-                    
-                    toggleStartMenu(); // Close menu
+                    toggleStartMenu();
                 }
             }
         });
@@ -1687,40 +1828,51 @@
         function openWindow(app) {
             const state = windows[app];
             if (!state) return;
-            
+
             const windowEl = document.getElementById(state.window);
 
-            // Always restore to default geometry and state before opening
+            // When opening resume normally, ensure we are not in full-resume mode
+            if (app === 'resume') {
+                document.body.classList.remove('full-resume-open');
+                fullResumeOpen = false;
+                setFullResumeButtonText('Show Full Resume');
+            }
+
             applyWindowDefaults(app);
-            
+
             state.isOpen = true;
             windowEl.classList.add('active');
             windowEl.classList.remove('closing');
             windowEl.style.zIndex = ++zIndex;
             activeWindow = app;
-            
+
             updateTaskbar();
         }
 
         function closeWindow(app) {
             const state = windows[app];
             const windowEl = document.getElementById(state.window);
-            
+
             windowEl.classList.add('closing');
-            
+
             setTimeout(() => {
                 state.isOpen = false;
                 state.isMaximized = false;
-                windowEl.classList.remove('active', 'closing', 'maximized');
+                windowEl.classList.remove('active', 'closing', 'maximized', 'full-resume-mode');
 
-                // Restore defaults so next open is consistent
                 applyWindowDefaults(app);
 
-                // Reset iframe src for Google to avoid history issues/reload
-                if(app === 'google') {
+                if (app === 'google') {
                     document.getElementById('googleFrame').src = "https://www.google.com/webhp?igu=1";
                 }
-                
+
+                if (app === 'resume') {
+                    document.body.classList.remove('full-resume-open');
+                    fullResumeOpen = false;
+                    setFullResumeButtonText('Show Full Resume');
+                    document.getElementById('fullResumeBtn').setAttribute('aria-expanded', 'false');
+                }
+
                 updateTaskbar();
             }, 150);
         }
@@ -1728,11 +1880,20 @@
         function minimizeWindow(app) {
             const state = windows[app];
             const windowEl = document.getElementById(state.window);
-            
+
             windowEl.classList.add('closing');
-            
+
             setTimeout(() => {
                 windowEl.classList.remove('active', 'closing');
+
+                if (app === 'resume' && fullResumeOpen) {
+                    document.body.classList.remove('full-resume-open');
+                    windowEl.classList.remove('full-resume-mode');
+                    fullResumeOpen = false;
+                    setFullResumeButtonText('Show Full Resume');
+                    document.getElementById('fullResumeBtn').setAttribute('aria-expanded', 'false');
+                }
+
                 updateTaskbar();
             }, 150);
         }
@@ -1740,7 +1901,7 @@
         function focusWindow(app) {
             const state = windows[app];
             const windowEl = document.getElementById(state.window);
-            
+
             if (!state.isOpen) {
                 openWindow(app);
             } else if (!windowEl.classList.contains('active')) {
@@ -1750,7 +1911,7 @@
             } else {
                 minimizeWindow(app);
             }
-            
+
             activeWindow = app;
             updateTaskbar();
         }
@@ -1758,7 +1919,7 @@
         function maximizeWindow(app) {
             const state = windows[app];
             const windowEl = document.getElementById(state.window);
-            
+
             if (state.isMaximized) {
                 windowEl.style.width = state.original.width;
                 windowEl.style.height = state.original.height;
@@ -1778,7 +1939,7 @@
                 windowEl.style.left = '0';
                 windowEl.classList.add('maximized');
             }
-            
+
             state.isMaximized = !state.isMaximized;
         }
 
@@ -1787,7 +1948,7 @@
                 const state = windows[app];
                 const btn = document.getElementById('taskbar-' + app);
                 const windowEl = document.getElementById(state.window);
-                
+
                 if (btn) {
                     if (state.isOpen) {
                         btn.classList.add('open');
@@ -1811,18 +1972,19 @@
         document.querySelectorAll('.window-titlebar').forEach(titlebar => {
             titlebar.addEventListener('mousedown', (e) => {
                 if (e.target.closest('.window-controls')) return;
-                
+
                 const windowId = titlebar.dataset.window;
                 const windowEl = document.getElementById(windowId);
                 const app = windowEl.dataset.app;
-                
+
                 if (windows[app].isMaximized) return;
-                
+                if (windowEl.classList.contains('full-resume-mode')) return;
+
                 isDragging = true;
                 dragWindow = windowEl;
                 dragOffsetX = e.clientX - windowEl.offsetLeft;
                 dragOffsetY = e.clientY - windowEl.offsetTop;
-                
+
                 windowEl.style.zIndex = ++zIndex;
             });
 
@@ -1840,7 +2002,7 @@
                 dragWindow.style.left = Math.max(0, e.clientX - dragOffsetX) + 'px';
                 dragWindow.style.top = Math.max(0, e.clientY - dragOffsetY) + 'px';
             }
-            
+
             if (isResizing && resizeWindow) {
                 handleResize(e);
             }
@@ -1849,7 +2011,7 @@
         document.addEventListener('mouseup', () => {
             isDragging = false;
             dragWindow = null;
-            
+
             if (isResizing) {
                 isResizing = false;
                 resizeWindow = null;
@@ -1868,14 +2030,14 @@
                 e.preventDefault();
                 const windowEl = resizer.parentElement;
                 const app = windowEl.dataset.app;
-                
+
                 if (windows[app].isMaximized) return;
+                if (windowEl.classList.contains('full-resume-mode')) return;
 
                 isResizing = true;
                 resizeWindow = windowEl;
                 windowEl.style.zIndex = ++zIndex;
-                
-                // Determine direction from class
+
                 if (resizer.classList.contains('resizer-n')) resizeDir = 'n';
                 else if (resizer.classList.contains('resizer-e')) resizeDir = 'e';
                 else if (resizer.classList.contains('resizer-s')) resizeDir = 's';
@@ -1897,7 +2059,7 @@
         function handleResize(e) {
             const dx = e.clientX - initialX;
             const dy = e.clientY - initialY;
-            
+
             const minW = 320;
             const minH = 200;
 
@@ -1906,7 +2068,6 @@
             let newTop = initialTop;
             let newLeft = initialLeft;
 
-            // Horizontal resizing
             if (resizeDir.includes('e')) {
                 newW = Math.max(minW, initialWidth + dx);
             } else if (resizeDir.includes('w')) {
@@ -1914,7 +2075,6 @@
                 newLeft = initialLeft + (initialWidth - newW);
             }
 
-            // Vertical resizing
             if (resizeDir.includes('s')) {
                 newH = Math.max(minH, initialHeight + dy);
             } else if (resizeDir.includes('n')) {
@@ -1922,9 +2082,8 @@
                 newTop = initialTop + (initialHeight - newH);
             }
 
-            // Apply constraints to keep window on screen partially
             if (newTop < 0) newTop = 0;
-            
+
             resizeWindow.style.width = newW + 'px';
             resizeWindow.style.height = newH + 'px';
             resizeWindow.style.top = newTop + 'px';
@@ -1966,11 +2125,11 @@
 
         function calcEquals() {
             if (!calcPrevValue || !calcOperator) return;
-            
+
             const prev = parseFloat(calcPrevValue);
             const current = parseFloat(calcValue);
             let result;
-            
+
             switch (calcOperator) {
                 case '+': result = prev + current; break;
                 case '-': result = prev - current; break;
@@ -1978,7 +2137,7 @@
                 case '/': result = current !== 0 ? prev / current : 'Error'; break;
                 default: return;
             }
-            
+
             calcExpression = calcPrevValue + ' ' + calcOperator.replace('*', '×').replace('/', '÷') + ' ' + calcValue + ' =';
             calcValue = String(result);
             calcPrevValue = '';
@@ -2041,7 +2200,7 @@
         function setWallpaper(num, el) {
             const desktop = document.getElementById('desktop');
             desktop.className = 'desktop wallpaper-' + num;
-            
+
             document.querySelectorAll('.wallpaper-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
@@ -2058,7 +2217,7 @@
         // Keyboard support for calculator
         document.addEventListener('keydown', (e) => {
             if (!windows.calculator.isOpen) return;
-            
+
             const key = e.key;
             if ('0123456789.'.includes(key)) calcInput(key);
             else if (key === '+') calcInput('+');
@@ -2069,6 +2228,63 @@
             else if (key === 'Escape') calcClear();
             else if (key === 'Backspace') calcBackspace();
         });
+
+        // Liquid glass button logic
+        const fullResumeBtn = document.getElementById('fullResumeBtn');
+        const fullResumeBtnText = document.getElementById('fullResumeBtnText');
+
+        function setFullResumeButtonText(text) {
+            fullResumeBtnText.textContent = text;
+
+            // Animate width to fit label (shrink when going to "Close Resume")
+            requestAnimationFrame(() => {
+                const textW = fullResumeBtnText.getBoundingClientRect().width;
+                const target = Math.max(168, Math.min(420, Math.ceil(textW + 18 + 18 + 18 + 10))); // padding + icon + gap
+                fullResumeBtn.style.width = target + 'px';
+            });
+        }
+
+        function openFullResume() {
+            document.getElementById('startMenu').classList.remove('active');
+
+            // Ensure resume is open
+            const resumeEl = document.getElementById('resumeWindow');
+            windows.resume.isOpen = true;
+            resumeEl.classList.add('active');
+            resumeEl.classList.remove('closing');
+            resumeEl.style.zIndex = ++zIndex;
+
+            // Apply full-screen mode
+            resumeEl.classList.add('full-resume-mode');
+            document.body.classList.add('full-resume-open');
+
+            activeWindow = 'resume';
+            updateTaskbar();
+
+            fullResumeOpen = true;
+            fullResumeBtn.setAttribute('aria-expanded', 'true');
+            setFullResumeButtonText('Close Resume');
+        }
+
+        function closeFullResume() {
+            const resumeEl = document.getElementById('resumeWindow');
+            resumeEl.classList.remove('full-resume-mode');
+            document.body.classList.remove('full-resume-open');
+
+            fullResumeOpen = false;
+            fullResumeBtn.setAttribute('aria-expanded', 'false');
+            setFullResumeButtonText('Show Full Resume');
+
+            closeWindow('resume');
+        }
+
+        fullResumeBtn.addEventListener('click', () => {
+            if (fullResumeOpen) closeFullResume();
+            else openFullResume();
+        });
+
+        // Initial sizing
+        setFullResumeButtonText('Show Full Resume');
     </script>
 </body>
 </html>
