@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Ward</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Wallpapers */
+        .desktop {
+            height: calc(100vh - 48px);
+            position: relative;
+            transition: background 0.5s ease;
+        }
+
+        .wallpaper-1 { background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #333333 100%); }
+        .wallpaper-2 { background: linear-gradient(135deg, #0a0a1f 0%, #1f1f3f 50%, #2f2f5f 100%); }
+        .wallpaper-3 { background: linear-gradient(135deg, #0f1f23 0%, #1f3f43 50%, #2f5f63 100%); }
+        .wallpaper-4 { background: linear-gradient(135deg, #0c0c1c 0%, #1c1c3c 50%, #2c2c5c 100%); }
+        .wallpaper-5 { background: linear-gradient(135deg, #141e30 0%, #243b55 50%, #34495e 100%); }
+        .wallpaper-6 { background: linear-gradient(135deg, #000000 0%, #434343 50%, #666666 100%); }
+
+        /* Ryan Ward Overlay */
+        .desktop::before {
+            content: "RYAN WARD";
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(4rem, 10vw, 7rem);
+            font-weight: 800;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            z-index: 1;
+            pointer-events: none;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .desktop::after {
+            content: "SOFTWARE RESUME";
+            position: absolute;
+            top: 57%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            /* Modified text styles per request: Solid Blue, Drop Shadow, No Gradient */
+            color: #0078d4;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background: none;
+            -webkit-text-fill-color: initial;
+            z-index: 1;
+            pointer-events: none;
+            letter-spacing: -0.02em;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .desktop-url {
+            position: absolute;
+            top: 67%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            pointer-events: none;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .wallpaper-option.wallpaper-1::before,
+        .wallpaper-option.wallpaper-2::before,
+        .wallpaper-option.wallpaper-3::before,
+        .wallpaper-option.wallpaper-4::before,
+        .wallpaper-option.wallpaper-5::before,
+        .wallpaper-option.wallpaper-6::before {
+            content: "RYAN WARD";
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+            z-index: 1;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .wallpaper-option::after {
+            content: "SOFTWARE RESUME";
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.65rem;
+            font-weight: 600;
+            /* Match the desktop style */
+            color: #0078d4;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            background: none;
+            -webkit-text-fill-color: initial;
+            z-index: 1;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        /* Desktop Icons Container */
+        .desktop-icons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 90px);
+            gap: 8px;
+            padding: 16px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            align-content: start;
+            z-index: 2;
+        }
+
+        /* Desktop Icon */
+        .desktop-icon {
+            width: 84px;
+            padding: 8px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.1s ease;
+            border: 1px solid transparent;
+        }
+
+        .desktop-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .desktop-icon.selected {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .desktop-icon .icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .desktop-icon span {
+            font-size: 12px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
+            display: block;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        /* Taskbar */
+        .taskbar {
+            height: 48px;
+            background: rgba(32, 32, 32, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1000;
+        }
+
+        .taskbar-center {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .taskbar-right {
+            position: absolute;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .taskbar-right:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .taskbar-right svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+            opacity: 0.9;
+        }
+
+        .taskbar-time {
+            color: white;
+            font-size: 12px;
+            text-align: right;
+            margin-left: 8px;
+        }
+
+        .taskbar-time .time { font-weight: 400; }
+        .taskbar-time .date { font-size: 11px; opacity: 0.9; }
+
+        /* Taskbar Button */
+        .taskbar-btn {
+            width: 44px;
+            height: 40px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+        }
+
+        .taskbar-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .taskbar-btn.active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .taskbar-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            width: 16px;
+            height: 3px;
+            background: #60cdff;
+            border-radius: 2px;
+        }
+
+        .taskbar-btn.open::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            width: 6px;
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 2px;
+        }
+
+        .taskbar-btn.open.active::after {
+            width: 16px;
+            background: #60cdff;
+        }
+
+        /* Window Styles */
+        .window {
+            position: absolute;
+            background: #202020;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.08);
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            min-width: 320px;
+            min-height: 200px;
+        }
+
+        .window.active {
+            display: flex;
+            animation: windowOpen 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .window.maximized {
+            border-radius: 0;
+            animation: none;
+        }
+        
+        /* Hide resizers when maximized */
+        .window.maximized .resizer {
+            display: none;
+        }
+
+        .window.closing {
+            animation: windowClose 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Resizers */
+        .resizer { position: absolute; z-index: 100; }
+        .resizer-n { top: 0; left: 0; right: 0; height: 6px; cursor: n-resize; background: transparent; }
+        .resizer-e { top: 0; right: 0; bottom: 0; width: 6px; cursor: e-resize; background: transparent; }
+        .resizer-s { bottom: 0; left: 0; right: 0; height: 6px; cursor: s-resize; background: transparent; }
+        .resizer-w { top: 0; left: 0; bottom: 0; width: 6px; cursor: w-resize; background: transparent; }
+        .resizer-ne { top: 0; right: 0; width: 12px; height: 12px; cursor: ne-resize; z-index: 101; background: transparent; }
+        .resizer-nw { top: 0; left: 0; width: 12px; height: 12px; cursor: nw-resize; z-index: 101; background: transparent; }
+        .resizer-se { bottom: 0; right: 0; width: 12px; height: 12px; cursor: se-resize; z-index: 101; background: transparent; }
+        .resizer-sw { bottom: 0; left: 0; width: 12px; height: 12px; cursor: sw-resize; z-index: 101; background: transparent; }
+
+        @keyframes windowOpen {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes windowClose {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+
+        /* Window Titlebar */
+        .window-titlebar {
+            height: 32px;
+            background: #1f1f1f;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 12px;
+            cursor: default;
+            flex-shrink: 0;
+        }
+
+        .window-title {
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 400;
+        }
+
+        .window-title svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .window-controls {
+            display: flex;
+            height: 100%;
+            z-index: 102; /* Ensure controls are above resizers if they overlap */
+        }
+
+        .window-control {
+            width: 46px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .window-control:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .window-control.close:hover {
+            background: #c42b1c;
+        }
+
+        .window-control svg {
+            width: 10px;
+            height: 10px;
+            stroke: white;
+            stroke-width: 1;
+            fill: none;
+        }
+
+        .window-content {
+            flex: 1;
+            overflow: auto;
+            background: #f3f3f3;
+        }
+
+        /* Start Menu */
+        .start-menu {
+            position: absolute;
+            bottom: 56px;
+            left: 50%;
+            /* Enhanced slide up animation properties */
+            transform: translateX(-50%) translateY(120%);
+            width: 640px;
+            max-width: calc(100vw - 24px);
+            background: rgba(32, 32, 32, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 40px;
+            opacity: 0;
+            z-index: 999;
+            pointer-events: none; /* Disable clicks when hidden */
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease;
+        }
+
+        .start-menu.active {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: all;
+        }
+
+        .start-menu-search {
+            width: 100%;
+            padding: 10px 16px 10px 44px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 24px;
+            transition: all 0.15s;
+        }
+
+        .start-menu-search:focus {
+            background: rgba(30,30,30,0.9);
+            border-color: #60cdff;
+        }
+
+        .start-menu-search::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            stroke: rgba(255,255,255,0.5);
+            fill: none;
+        }
+
+        .start-section-title {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .pinned-apps {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+        }
+
+        .pinned-app {
+            padding: 12px 8px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .pinned-app:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .pinned-app .icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pinned-app span {
+            color: white;
+            font-size: 12px;
+            display: block;
+        }
+
+        /* Resume Content */
+        .resume-content {
+            padding: 40px;
+            max-width: 8.5in;
+            margin: 0 auto;
+        }
+
+        .resume-container {
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .resume-header { text-align: center; margin-bottom: 25px; }
+        .resume-name { font-size: 28px; font-weight: bold; margin: 0; color: #333; }
+        .contact-info { font-size: 14px; margin: 5px 0; color: #333; }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .section-content { font-size: 14px; color: #333; line-height: 1.6; }
+        .resume-container ul { padding-left: 20px; list-style-type: disc; }
+        .resume-container li { margin-bottom: 5px; }
+        .experience-item { margin-bottom: 20px; }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; flex-wrap: wrap; gap: 8px; }
+        .item-title { font-weight: bold; }
+        .item-location-date { text-align: right; font-style: italic; color: #555; }
+        .company-info { font-style: italic; }
+        .company-url { font-size: 12px; color: #555; }
+        .gpa { padding-left: 20px; }
+        .expertise-container { display: flex; justify-content: space-between; flex-wrap: wrap; }
+        .expertise-column { width: 48%; min-width: 200px; }
+        .resume-banner { width: 100%; max-width: 800px; margin: 0 auto 20px; display: block; }
+
+        /* Calculator */
+        .calculator {
+            background: #202020;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calc-display {
+            background: #202020;
+            padding: 16px 20px;
+            text-align: right;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .calc-expression {
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .calc-result {
+            color: white;
+            font-size: 42px;
+            font-weight: 300;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            padding: 2px;
+            flex: 1;
+        }
+
+        .calc-btn {
+            background: #3b3b3b;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px;
+        }
+
+        .calc-btn:hover { background: #4a4a4a; }
+        .calc-btn:active { background: #555; }
+        .calc-btn.operator { background: #323232; }
+        .calc-btn.operator:hover { background: #3d3d3d; }
+        .calc-btn.equals { background: #60cdff; color: #000; }
+        .calc-btn.equals:hover { background: #7dd6ff; }
+        .calc-btn.top-row { background: #323232; }
+        .calc-btn.top-row:hover { background: #3d3d3d; }
+
+        /* Settings */
+        .settings-container {
+            display: flex;
+            height: 100%;
+            background: #f3f3f3;
+        }
+
+        .settings-sidebar {
+            width: 240px;
+            background: #f9f9f9;
+            border-right: 1px solid #e5e5e5;
+            padding: 16px 8px;
+            flex-shrink: 0;
+        }
+
+        .settings-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #333;
+            font-size: 14px;
+            transition: background 0.1s;
+        }
+
+        .settings-nav-item:hover { background: rgba(0,0,0,0.05); }
+        .settings-nav-item.active { background: rgba(0,0,0,0.08); }
+        .settings-nav-item svg { width: 20px; height: 20px; fill: #333; }
+
+        .settings-content {
+            flex: 1;
+            padding: 32px;
+            overflow: auto;
+        }
+
+        .settings-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        .wallpaper-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .wallpaper-option {
+            aspect-ratio: 16/10;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 3px solid transparent;
+            overflow: hidden;
+        }
+
+        .wallpaper-option:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .wallpaper-option.selected {
+            border-color: #0078d4;
+            box-shadow: 0 0 0 2px #0078d4;
+        }
+
+        /* Clock App */
+        .clock-app {
+            background: #202020;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .clock-time {
+            font-size: 72px;
+            font-weight: 200;
+            letter-spacing: 2px;
+        }
+
+        .clock-date {
+            font-size: 24px;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+
+        .clock-seconds {
+            font-size: 18px;
+            opacity: 0.5;
+            margin-top: 16px;
+        }
+        
+        /* Texter App */
+        .texter-app {
+            background: #202020;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: text;
+        }
+
+        .texter-input {
+            width: 80%;
+            max-width: 800px;
+            color: white;
+            font-size: 80px;
+            font-weight: 300;
+            text-align: center;
+            outline: none;
+            border: none;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Files App */
+        .files-app {
+            display: flex;
+            height: 100%;
+            background: #f3f3f3;
+        }
+
+        .files-sidebar {
+            width: 200px;
+            background: #f9f9f9;
+            border-right: 1px solid #e5e5e5;
+            padding: 12px 8px;
+            flex-shrink: 0;
+        }
+
+        .files-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #333;
+            font-size: 13px;
+            transition: background 0.1s;
+        }
+
+        .files-nav-item:hover { background: rgba(0,0,0,0.05); }
+        .files-nav-item.active { background: #cce8ff; }
+        .files-nav-item svg { width: 18px; height: 18px; }
+
+        .files-content {
+            flex: 1;
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+            align-content: start;
+        }
+
+        .file-item {
+            padding: 12px 8px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .file-item:hover { background: rgba(0,0,0,0.05); }
+        .file-item svg { width: 48px; height: 48px; margin-bottom: 8px; }
+        .file-item span { font-size: 12px; color: #333; display: block; }
+
+        /* Google App Iframe Styling */
+        .google-app-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .desktop-icons {
+                grid-template-columns: repeat(auto-fill, 80px);
+            }
+            
+            .desktop-icon {
+                width: 76px;
+            }
+
+            .pinned-apps {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .start-menu {
+                padding: 24px;
+                bottom: 52px;
+            }
+
+            .resume-content {
+                padding: 16px;
+            }
+
+            .resume-container {
+                padding: 20px;
+            }
+
+            .item-header {
+                flex-direction: column;
+            }
+
+            .item-location-date {
+                text-align: left;
+            }
+
+            .expertise-column {
+                width: 100%;
+            }
+
+            .settings-sidebar,
+            .files-sidebar {
+                width: 60px;
+                padding: 8px 4px;
+            }
+
+            .settings-nav-item span,
+            .files-nav-item span {
+                display: none;
+            }
+
+            .settings-nav-item,
+            .files-nav-item {
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .clock-time {
+                font-size: 48px;
+            }
+
+            .clock-date {
+                font-size: 18px;
+            }
+
+            .calc-result {
+                font-size: 32px;
+            }
+            
+            .texter-input {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pinned-apps {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .taskbar-btn {
+                width: 40px;
+            }
+
+            .taskbar-right {
+                padding: 4px 8px;
+            }
+
+            .desktop-icons {
+                grid-template-columns: repeat(auto-fill, 70px);
+                gap: 4px;
+                padding: 8px;
+            }
+
+            .desktop-icon {
+                width: 66px;
+            }
+
+            .desktop-icon .icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* PHONE/SMALL-SCREEN MODE: Show only the Resume full page */
+        @media (max-width: 1024px) {
+            /* Hide all desktop UI and extras */
+            .taskbar,
+            .desktop-icons,
+            .start-menu,
+            #filesWindow,
+            #calculatorWindow,
+            #clockWindow,
+            #texterWindow,
+            #googleWindow,
+            #settingsWindow,
+            .desktop::before,
+            .desktop::after,
+            .desktop-url {
+                display: none !important;
+            }
+
+            /* Make resume window full screen */
+            #resumeWindow {
+                display: flex !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                z-index: 1 !important;
+            }
+            #resumeWindow .window-titlebar,
+            #resumeWindow .resizer {
+                display: none !important;
+            }
+            .desktop {
+                height: 100vh !important;
+            }
+            body {
+                overflow: auto !important;
+                height: 100vh !important;
+            }
+            /* Tighter resume padding on phones */
+            .resume-content { padding: 16px !important; }
+            .resume-container { padding: 20px !important; box-shadow: none !important; }
+        }
+
+        /* Windows 11 refinements */
+        .taskbar-btn:hover {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .window {
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop -->
+    <div class="desktop wallpaper-1" id="desktop">
+        <div class="desktop-url">ryanward.org</div>
+        <!-- Desktop Icons -->
+        <div class="desktop-icons">
+            <div class="desktop-icon" ondblclick="openWindow('resume')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/>
+                        <path d="M28 4v12h12L28 4z" fill="#A3D4F7"/>
+                        <rect x="16" y="22" width="16" height="2" rx="1" fill="white"/>
+                        <rect x="16" y="28" width="16" height="2" rx="1" fill="white"/>
+                        <rect x="16" y="34" width="10" height="2" rx="1" fill="white"/>
+                    </svg>
+                </div>
+                <span>Resume</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('files')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/>
+                        <path d="M6 18h36v22a2 2 0 01-2 2H8a2 2 0 01-2-2V18z" fill="#FFD54F"/>
+                    </svg>
+                </div>
+                <span>Files</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('calculator')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="4" width="32" height="40" rx="4" fill="#1E88E5"/>
+                        <rect x="12" y="8" width="24" height="10" rx="2" fill="#BBDEFB"/>
+                        <rect x="12" y="22" width="6" height="6" rx="1" fill="white"/>
+                        <rect x="21" y="22" width="6" height="6" rx="1" fill="white"/>
+                        <rect x="30" y="22" width="6" height="6" rx="1" fill="#90CAF9"/>
+                        <rect x="12" y="31" width="6" height="6" rx="1" fill="white"/>
+                        <rect x="21" y="31" width="6" height="6" rx="1" fill="white"/>
+                        <rect x="30" y="31" width="6" height="6" rx="1" fill="#90CAF9"/>
+                    </svg>
+                </div>
+                <span>Calculator</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('clock')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="24" r="20" fill="#5C6BC0"/>
+                        <circle cx="24" cy="24" r="17" fill="#7986CB"/>
+                        <circle cx="24" cy="24" r="2" fill="white"/>
+                        <path d="M24 12v12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M24 24l8 6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span>Clock</span>
+            </div>
+            
+            <div class="desktop-icon" ondblclick="openWindow('texter')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6h40v28H12L4 42V6z" fill="#4CAF50"/>
+                        <path d="M10 14h28v4H10v-4zm0 10h20v4H10v-4z" fill="white"/>
+                    </svg>
+                </div>
+                <span>Free Texter</span>
+            </div>
+
+            <!-- Google App Icon -->
+            <div class="desktop-icon" ondblclick="openWindow('google')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" fill="#FFC107"/>
+                        <path d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" fill="#FF3D00"/>
+                        <path d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" fill="#4CAF50"/>
+                        <path d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" fill="#1976D2"/>
+                    </svg>
+                </div>
+                <span>Google</span>
+            </div>
+
+            <div class="desktop-icon" ondblclick="openWindow('settings')">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 4l3.5 2.5L32 5l1.5 4.5L38 11l-1 4.5 3.5 3-2.5 3.5L40 27l-4.5 1.5L34 33l-4.5-1-3 3.5-3.5-2.5L18 35l-1.5-4.5L12 29l1-4.5L9.5 21l2.5-3.5L10 13l4.5-1.5L16 7l4.5 1 3-3.5z" fill="#607D8B"/>
+                        <circle cx="24" cy="21" r="7" fill="#B0BEC5"/>
+                        <circle cx="24" cy="21" r="4" fill="#607D8B"/>
+                    </svg>
+                </div>
+                <span>Settings</span>
+            </div>
+
+            <!-- AI Chatbot Icon - Updated to redirect -->
+            <div class="desktop-icon" ondblclick="window.location.href='https://ryanward.org/ai'">
+                <div class="icon">
+                    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 4C14 4 6 12 6 22v14h8v-2h20v2h8V22c0-10-8-18-18-18z" fill="#00BCD4"/>
+                        <circle cx="17" cy="22" r="3" fill="white"/>
+                        <circle cx="31" cy="22" r="3" fill="white"/>
+                        <rect x="16" y="30" width="16" height="4" rx="2" fill="white"/>
+                    </svg>
+                </div>
+                <span>AI Chatbot</span>
+            </div>
+        </div>
+
+        <!-- Start Menu -->
+        <div class="start-menu" id="startMenu">
+            <div class="search-wrapper">
+                <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" class="start-menu-search" placeholder="Type here to search on Google...">
+            </div>
+            <div class="start-section-title">Pinned</div>
+            <div class="pinned-apps">
+                <div class="pinned-app" onclick="openWindow('resume'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/><path d="M28 4v12h12L28 4z" fill="#A3D4F7"/><rect x="16" y="22" width="16" height="2" rx="1" fill="white"/><rect x="16" y="28" width="16" height="2" rx="1" fill="white"/></svg>
+                    </div>
+                    <span>Resume</span>
+                </div>
+                <div class="pinned-app" onclick="openWindow('files'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/><path d="M6 18h36v22a2 2 0 01-2 2H8a2 2 0 01-2-2V18z" fill="#FFD54F"/></svg>
+                    </div>
+                    <span>Files</span>
+                </div>
+                <div class="pinned-app" onclick="openWindow('calculator'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><rect x="8" y="4" width="32" height="40" rx="4" fill="#1E88E5"/><rect x="12" y="8" width="24" height="10" rx="2" fill="#BBDEFB"/></svg>
+                    </div>
+                    <span>Calculator</span>
+                </div>
+                <div class="pinned-app" onclick="openWindow('clock'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#5C6BC0"/><circle cx="24" cy="24" r="17" fill="#7986CB"/><path d="M24 12v12" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+                    </div>
+                    <span>Clock</span>
+                </div>
+                <div class="pinned-app" onclick="openWindow('texter'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><path d="M4 6h40v28H12L4 42V6z" fill="#4CAF50"/><path d="M10 14h28v4H10v-4zm0 10h20v4H10v-4z" fill="white"/></svg>
+                    </div>
+                    <span>Free Texter</span>
+                </div>
+                <div class="pinned-app" onclick="openWindow('google'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" fill="#FFC107"/><path d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" fill="#FF3D00"/><path d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" fill="#4CAF50"/><path d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" fill="#1976D2"/></svg>
+                    </div>
+                    <span>Google</span>
+                </div>
+                <div class="pinned-app" onclick="openWindow('settings'); toggleStartMenu();">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><path d="M24 4l3.5 2.5L32 5l1.5 4.5L38 11l-1 4.5 3.5 3-2.5 3.5L40 27l-4.5 1.5L34 33l-4.5-1-3 3.5-3.5-2.5L18 35l-1.5-4.5L12 29l1-4.5L9.5 21l2.5-3.5L10 13l4.5-1.5L16 7l4.5 1 3-3.5z" fill="#607D8B"/><circle cx="24" cy="21" r="7" fill="#B0BEC5"/></svg>
+                    </div>
+                    <span>Settings</span>
+                </div>
+                <div class="pinned-app" onclick="window.location.href='https://ryanward.org/ai'">
+                    <div class="icon">
+                        <svg viewBox="0 0 48 48"><path d="M24 4C14 4 6 12 6 22v14h8v-2h20v2h8V22c0-10-8-18-18-18z" fill="#00BCD4"/><circle cx="17" cy="22" r="3" fill="white"/><circle cx="31" cy="22" r="3" fill="white"/><rect x="16" y="30" width="16" height="4" rx="2" fill="white"/></svg>
+                    </div>
+                    <span>AI Chatbot</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resume Window -->
+        <div class="window" id="resumeWindow" data-app="resume" style="width: 850px; height: 550px; top: 40px; left: 80px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="resumeWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/><path d="M28 4v12h12L28 4z" fill="#A3D4F7"/></svg>
+                    Resume - Ryan Ward
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('resume')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('resume')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('resume')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="resume-content">
+                    <img src="https://github.com/Humadating/ryanward.org/blob/main/New%20Project%20(3).webp?raw=true" alt="Ryan Ward" class="resume-banner">
+                    <div class="resume-container">
+                        <div class="resume-header">
+                            <p class="resume-name">Ryan Ward</p>
+                            <p class="contact-info">ryanwxbox@gmail.com | El Segundo, CA</p>
+                        </div>
+                        <div class="section">
+                            <h2 class="section-title">Professional Summary</h2>
+                            <div class="section-content">
+                                <p>Entrepreneurial and driven high school senior with hands on experience in business ownership, digital media, and property management. Skilled in graphic design, effective communication, and philosophical inquiry. Willing to do anything and everything in his power to accomplish a goal.</p>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <h2 class="section-title">Education</h2>
+                            <div class="section-content">
+                                <p class="item-title">Da Vinci Connect High School, El Segundo, CA</p>
+                                <p>Senior, Graduating Class of 2026</p>
+                                <ul class="gpa">
+                                    <li>GPA: 3.4120</li>
+                                    <li>Weighted GPA: 3.5634</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <h2 class="section-title">Areas of Expertise</h2>
+                            <div class="section-content expertise-container">
+                                <div class="expertise-column">
+                                    <ul>
+                                        <li>Philosophy</li>
+                                        <li>Communication</li>
+                                        <li>Graphic Design (Adobe Suite)</li>
+                                    </ul>
+                                </div>
+                                <div class="expertise-column">
+                                    <ul>
+                                        <li>Entrepreneurship</li>
+                                        <li>Project Management</li>
+                                        <li>Effective Debating Skills</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section">
+                            <h2 class="section-title">Professional Experience</h2>
+                            <div class="section-content">
+                                <div class="experience-item">
+                                    <div class="item-header">
+                                        <div>
+                                            <span class="item-title">Co-Owner</span> | <span class="company-info">Captok | Full-time</span>
+                                            <div class="company-url">https://captiontok.ai (No Longer active)</div>
+                                        </div>
+                                        <div class="item-location-date">
+                                            <div>Fully online</div>
+                                            <div>April 2023 - 2025</div>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <li>Co-founded and managed operations for an AI-powered video captioning service.</li>
+                                        <li>Led graphic design for marketing materials, website assets, and user interface using the Adobe Creative Suite.</li>
+                                        <li>Drove business growth by communicating with partners, stakeholders, and potential clients.</li>
+                                    </ul>
+                                </div>
+                                <div class="experience-item">
+                                    <div class="item-header">
+                                        <div>
+                                            <span class="item-title">Property Management Assistant</span> | <span class="company-info">401K Realty | Part-time</span>
+                                            <div class="company-url">http://www.401krealty.com</div>
+                                        </div>
+                                        <div class="item-location-date">
+                                            <div>13658 Hawthorne Blvd, Hawthorne, CA</div>
+                                            <div>June 2020 - Present</div>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <li>Assist in managing property listings, scheduling viewings, and handling client communications.</li>
+                                        <li>Perform administrative tasks, including data entry and document organization, to support the realty team.</li>
+                                        <li>Provide excellent customer service to current and prospective tenants and property owners.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Window -->
+        <div class="window" id="calculatorWindow" data-app="calculator" style="width: 320px; height: 480px; top: 60px; left: 200px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="calculatorWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48" width="16" height="16"><rect x="8" y="4" width="32" height="40" rx="4" fill="#1E88E5"/></svg>
+                    Calculator
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('calculator')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('calculator')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('calculator')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="calculator">
+                    <div class="calc-display">
+                        <div class="calc-expression" id="calcExpression"></div>
+                        <div class="calc-result" id="calcResult">0</div>
+                    </div>
+                    <div class="calc-buttons">
+                        <button class="calc-btn top-row" onclick="calcPercent()">%</button>
+                        <button class="calc-btn top-row" onclick="calcCE()">CE</button>
+                        <button class="calc-btn top-row" onclick="calcClear()">C</button>
+                        <button class="calc-btn top-row" onclick="calcBackspace()">⌫</button>
+                        <button class="calc-btn operator" onclick="calcInput('1/')">1/x</button>
+                        <button class="calc-btn operator" onclick="calcSquare()">x²</button>
+                        <button class="calc-btn operator" onclick="calcSqrt()">√</button>
+                        <button class="calc-btn operator" onclick="calcInput('/')">÷</button>
+                        <button class="calc-btn" onclick="calcInput('7')">7</button>
+                        <button class="calc-btn" onclick="calcInput('8')">8</button>
+                        <button class="calc-btn" onclick="calcInput('9')">9</button>
+                        <button class="calc-btn operator" onclick="calcInput('*')">×</button>
+                        <button class="calc-btn" onclick="calcInput('4')">4</button>
+                        <button class="calc-btn" onclick="calcInput('5')">5</button>
+                        <button class="calc-btn" onclick="calcInput('6')">6</button>
+                        <button class="calc-btn operator" onclick="calcInput('-')">−</button>
+                        <button class="calc-btn" onclick="calcInput('1')">1</button>
+                        <button class="calc-btn" onclick="calcInput('2')">2</button>
+                        <button class="calc-btn" onclick="calcInput('3')">3</button>
+                        <button class="calc-btn operator" onclick="calcInput('+')">+</button>
+                        <button class="calc-btn" onclick="calcNegate()">±</button>
+                        <button class="calc-btn" onclick="calcInput('0')">0</button>
+                        <button class="calc-btn" onclick="calcInput('.')">.</button>
+                        <button class="calc-btn equals" onclick="calcEquals()">=</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clock Window -->
+        <div class="window" id="clockWindow" data-app="clock" style="width: 400px; height: 350px; top: 80px; left: 250px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="clockWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48" width="16" height="16"><circle cx="24" cy="24" r="20" fill="#5C6BC0"/></svg>
+                    Clock
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('clock')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('clock')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('clock')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="clock-app">
+                    <div class="clock-time" id="clockAppTime">12:00</div>
+                    <div class="clock-date" id="clockAppDate">Sunday, January 1</div>
+                    <div class="clock-seconds" id="clockAppSeconds">:00</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Texter Window -->
+        <div class="window" id="texterWindow" data-app="texter" style="width: 600px; height: 400px; top: 100px; left: 300px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="texterWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48" width="16" height="16"><path d="M4 6h40v28H12L4 42V6z" fill="#4CAF50"/></svg>
+                    Free Texter
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('texter')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('texter')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('texter')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="texter-app" onclick="document.getElementById('texterInput').focus()">
+                    <div class="texter-input" id="texterInput" contenteditable="true" spellcheck="false" oninput="updateTexterSize(this)">Type something...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Window -->
+        <div class="window" id="googleWindow" data-app="google" style="width: 900px; height: 600px; top: 40px; left: 60px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="googleWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48" width="16" height="16"><path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" fill="#FFC107"/></svg>
+                    Google
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('google')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('google')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('google')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content" style="overflow: hidden;">
+                <!-- Using igu=1 for better iframe compatibility with Google, fallback to Bing if blocked -->
+                <iframe id="googleFrame" src="https://www.google.com/webhp?igu=1" class="google-app-frame"></iframe>
+            </div>
+        </div>
+
+        <!-- Settings Window -->
+        <div class="window" id="settingsWindow" data-app="settings" style="width: 700px; height: 500px; top: 50px; left: 150px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="settingsWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48" width="16" height="16"><path d="M24 4l3.5 2.5L32 5l1.5 4.5L38 11l-1 4.5 3.5 3-2.5 3.5L40 27l-4.5 1.5L34 33l-4.5-1-3 3.5-3.5-2.5L18 35l-1.5-4.5L12 29l1-4.5L9.5 21l2.5-3.5L10 13l4.5-1.5L16 7l4.5 1 3-3.5z" fill="#607D8B"/></svg>
+                    Settings
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('settings')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('settings')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('settings')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="settings-container">
+                    <div class="settings-sidebar">
+                        <div class="settings-nav-item active">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="#607D8B"/></svg>
+                            <span>Personalization</span>
+                        </div>
+                        <div class="settings-nav-item">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#607D8B"/></svg>
+                            <span>System</span>
+                        </div>
+                        <div class="settings-nav-item">
+                            <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z" fill="#607D8B"/></svg>
+                            <span>About</span>
+                        </div>
+                    </div>
+                    <div class="settings-content">
+                        <h1 class="settings-title">Background</h1>
+                        <div class="wallpaper-grid">
+                            <div class="wallpaper-option wallpaper-1 selected" onclick="setWallpaper(1, this)"></div>
+                            <div class="wallpaper-option wallpaper-2" onclick="setWallpaper(2, this)"></div>
+                            <div class="wallpaper-option wallpaper-3" onclick="setWallpaper(3, this)"></div>
+                            <div class="wallpaper-option wallpaper-4" onclick="setWallpaper(4, this)"></div>
+                            <div class="wallpaper-option wallpaper-5" onclick="setWallpaper(5, this)"></div>
+                            <div class="wallpaper-option wallpaper-6" onclick="setWallpaper(6, this)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Files Window -->
+        <div class="window" id="filesWindow" data-app="files" style="width: 700px; height: 450px; top: 70px; left: 120px;">
+            <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
+            <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
+            <div class="window-titlebar" data-window="filesWindow">
+                <div class="window-title">
+                    <svg viewBox="0 0 48 48" width="16" height="16"><path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/></svg>
+                    File Explorer
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('files')">
+                        <svg viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                    <div class="window-control maximize" onclick="maximizeWindow('files')">
+                        <svg viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" stroke="white" stroke-width="1" fill="none"/></svg>
+                    </div>
+                    <div class="window-control close" onclick="closeWindow('files')">
+                        <svg viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke="white" stroke-width="1"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="files-app">
+                    <div class="files-sidebar">
+                        <div class="files-nav-item active">
+                            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z" fill="#FFC107"/></svg>
+                            <span>Home</span>
+                        </div>
+                        <div class="files-nav-item">
+                            <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z" fill="#4CAF50"/></svg>
+                            <span>Downloads</span>
+                        </div>
+                        <div class="files-nav-item">
+                            <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" fill="#90CAF9"/></svg>
+                            <span>Documents</span>
+                        </div>
+                        <div class="files-nav-item">
+                            <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" fill="#9C27B0"/></svg>
+                            <span>Pictures</span>
+                        </div>
+                    </div>
+                    <div class="files-content">
+                        <div class="file-item" ondblclick="openWindow('resume')">
+                            <svg viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/><path d="M28 4v12h12L28 4z" fill="#A3D4F7"/></svg>
+                            <span>Resume.pdf</span>
+                        </div>
+                        <div class="file-item">
+                            <svg viewBox="0 0 48 48"><path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/><path d="M6 18h36v22a2 2 0 01-2 2H8a2 2 0 01-2-2V18z" fill="#FFD54F"/></svg>
+                            <span>Projects</span>
+                        </div>
+                        <div class="file-item">
+                            <svg viewBox="0 0 48 48"><path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/><path d="M6 18h36v22a2 2 0 01-2 2H8a2 2 0 01-2-2V18z" fill="#FFD54F"/></svg>
+                            <span>Documents</span>
+                        </div>
+                        <div class="file-item">
+                            <svg viewBox="0 0 48 48"><rect x="8" y="4" width="32" height="40" rx="2" fill="#43A047"/><path d="M14 16h20M14 24h20M14 32h12" stroke="white" stroke-width="2"/></svg>
+                            <span>Notes.txt</span>
+                        </div>
+                        <div class="file-item">
+                            <svg viewBox="0 0 48 48"><rect x="6" y="6" width="36" height="36" rx="4" fill="#E91E63"/><path d="M16 18h16v12H16z" fill="white"/></svg>
+                            <span>Photo.jpg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="taskbar-center">
+            <div class="taskbar-btn" id="startBtn" onclick="toggleStartMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect x="3" y="3" width="8" height="8" rx="1.5" fill="#60cdff"/>
+                    <rect x="13" y="3" width="8" height="8" rx="1.5" fill="#60cdff"/>
+                    <rect x="3" y="13" width="8" height="8" rx="1.5" fill="#60cdff"/>
+                    <rect x="13" y="13" width="8" height="8" rx="1.5" fill="#60cdff"/>
+                </svg>
+            </div>
+            <div class="taskbar-btn" onclick="focusSearch()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="7" stroke="white" stroke-width="2"/>
+                    <path d="M21 21l-4.35-4.35" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-resume" onclick="focusWindow('resume')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/></svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-files" onclick="focusWindow('files')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/></svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-calculator" onclick="focusWindow('calculator')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><rect x="8" y="4" width="32" height="40" rx="4" fill="#1E88E5"/></svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-clock" onclick="focusWindow('clock')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#5C6BC0"/></svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-texter" onclick="focusWindow('texter')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path d="M4 6h40v28H12L4 42V6z" fill="#4CAF50"/></svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-google" onclick="focusWindow('google')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" fill="#FFC107"/></svg>
+            </div>
+            <div class="taskbar-btn" id="taskbar-settings" onclick="focusWindow('settings')">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path d="M24 4l3.5 2.5L32 5l1.5 4.5L38 11l-1 4.5 3.5 3-2.5 3.5L40 27l-4.5 1.5L34 33l-4.5-1-3 3.5-3.5-2.5L18 35l-1.5-4.5L12 29l1-4.5L9.5 21l2.5-3.5L10 13l4.5-1.5L16 7l4.5 1 3-3.5z" fill="#607D8B"/></svg>
+            </div>
+        </div>
+
+        <div class="taskbar-right">
+            <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" fill="white"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.34C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4h-2V9h2v5z" fill="white"/></svg>
+            <div class="taskbar-time">
+                <div class="time" id="taskbarTime">12:00 PM</div>
+                <div class="date" id="taskbarDate">1/1/2025</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        const windows = {
+            resume: { window: 'resumeWindow', isOpen: false, isMaximized: false, original: {} },
+            files: { window: 'filesWindow', isOpen: false, isMaximized: false, original: {} },
+            calculator: { window: 'calculatorWindow', isOpen: false, isMaximized: false, original: {} },
+            clock: { window: 'clockWindow', isOpen: false, isMaximized: false, original: {} },
+            texter: { window: 'texterWindow', isOpen: false, isMaximized: false, original: {} },
+            google: { window: 'googleWindow', isOpen: false, isMaximized: false, original: {} },
+            settings: { window: 'settingsWindow', isOpen: false, isMaximized: false, original: {} }
+        };
+
+        let activeWindow = null;
+        let zIndex = 100;
+        
+        // Capture default size/position for each window so they always open the same way
+        function captureWindowDefaults() {
+            for (const app in windows) {
+                const id = windows[app].window;
+                const el = document.getElementById(id);
+                if (!el) continue;
+                windows[app].default = {
+                    width: el.style.width || '',
+                    height: el.style.height || '',
+                    top: el.style.top || '',
+                    left: el.style.left || ''
+                };
+            }
+        }
+
+        if (document.readyState !== 'loading') {
+            captureWindowDefaults();
+        } else {
+            document.addEventListener('DOMContentLoaded', captureWindowDefaults);
+        }
+
+        function applyWindowDefaults(app) {
+            const state = windows[app];
+            const el = document.getElementById(state.window);
+            const defs = state.default || {};
+
+            // Ensure not maximized/closing
+            el.classList.remove('maximized', 'closing');
+            state.isMaximized = false;
+
+            // Restore geometry
+            if (defs) {
+                el.style.width = defs.width || el.style.width;
+                el.style.height = defs.height || el.style.height;
+                el.style.top = defs.top || el.style.top;
+                el.style.left = defs.left || el.style.left;
+            }
+
+            // Reset scroll position inside content pane
+            const content = el.querySelector('.window-content');
+            if (content) content.scrollTop = 0;
+        }
+
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            const dateStr = now.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+            document.getElementById('taskbarTime').textContent = timeStr;
+            document.getElementById('taskbarDate').textContent = dateStr;
+
+            // Clock app
+            const clockTime = document.getElementById('clockAppTime');
+            const clockDate = document.getElementById('clockAppDate');
+            const clockSeconds = document.getElementById('clockAppSeconds');
+            if (clockTime) {
+                clockTime.textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                clockDate.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+                clockSeconds.textContent = ':' + String(now.getSeconds()).padStart(2, '0');
+            }
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // Texter App Logic
+        function updateTexterSize(el) {
+            const text = el.innerText;
+            const length = text.length;
+            
+            let size = 80;
+            if (length > 15) size = 60;
+            if (length > 35) size = 48;
+            if (length > 70) size = 36;
+            if (length > 140) size = 24;
+            if (length > 280) size = 18;
+            if (length > 500) size = 14;
+            
+            el.style.fontSize = size + 'px';
+        }
+
+        // Start Menu
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('startMenu');
+            startMenu.classList.toggle('active');
+            
+            // If opening, clear search
+            if (startMenu.classList.contains('active')) {
+                const searchInput = document.querySelector('.start-menu-search');
+                searchInput.value = '';
+                searchInput.focus();
+            }
+        }
+
+        function focusSearch() {
+            const startMenu = document.getElementById('startMenu');
+            if (!startMenu.classList.contains('active')) {
+                startMenu.classList.add('active');
+            }
+            setTimeout(() => {
+                document.querySelector('.start-menu-search').focus();
+            }, 100);
+        }
+
+        // Search functionality for Google
+        document.querySelector('.start-menu-search').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const query = this.value;
+                if (query.trim() !== '') {
+                    openWindow('google');
+                    const frame = document.getElementById('googleFrame');
+                    // Try to use Google's pseudo-embeddable URL, or fall back to Bing if blocking occurs
+                    frame.src = "https://www.google.com/search?igu=1&q=" + encodeURIComponent(query);
+                    
+                    toggleStartMenu(); // Close menu
+                }
+            }
+        });
+
+        // Close start menu on outside click
+        document.getElementById('desktop').addEventListener('click', (e) => {
+            if (!e.target.closest('.start-menu') && !e.target.closest('#startBtn')) {
+                document.getElementById('startMenu').classList.remove('active');
+            }
+        });
+
+        // Window Management
+        function openWindow(app) {
+            const state = windows[app];
+            if (!state) return;
+            
+            const windowEl = document.getElementById(state.window);
+
+            // Always restore to default geometry and state before opening
+            applyWindowDefaults(app);
+            
+            state.isOpen = true;
+            windowEl.classList.add('active');
+            windowEl.classList.remove('closing');
+            windowEl.style.zIndex = ++zIndex;
+            activeWindow = app;
+            
+            updateTaskbar();
+        }
+
+        function closeWindow(app) {
+            const state = windows[app];
+            const windowEl = document.getElementById(state.window);
+            
+            windowEl.classList.add('closing');
+            
+            setTimeout(() => {
+                state.isOpen = false;
+                state.isMaximized = false;
+                windowEl.classList.remove('active', 'closing', 'maximized');
+
+                // Restore defaults so next open is consistent
+                applyWindowDefaults(app);
+
+                // Reset iframe src for Google to avoid history issues/reload
+                if(app === 'google') {
+                    document.getElementById('googleFrame').src = "https://www.google.com/webhp?igu=1";
+                }
+                
+                updateTaskbar();
+            }, 150);
+        }
+
+        function minimizeWindow(app) {
+            const state = windows[app];
+            const windowEl = document.getElementById(state.window);
+            
+            windowEl.classList.add('closing');
+            
+            setTimeout(() => {
+                windowEl.classList.remove('active', 'closing');
+                updateTaskbar();
+            }, 150);
+        }
+
+        function focusWindow(app) {
+            const state = windows[app];
+            const windowEl = document.getElementById(state.window);
+            
+            if (!state.isOpen) {
+                openWindow(app);
+            } else if (!windowEl.classList.contains('active')) {
+                windowEl.classList.add('active');
+                windowEl.classList.remove('closing');
+                windowEl.style.zIndex = ++zIndex;
+            } else {
+                minimizeWindow(app);
+            }
+            
+            activeWindow = app;
+            updateTaskbar();
+        }
+
+        function maximizeWindow(app) {
+            const state = windows[app];
+            const windowEl = document.getElementById(state.window);
+            
+            if (state.isMaximized) {
+                windowEl.style.width = state.original.width;
+                windowEl.style.height = state.original.height;
+                windowEl.style.top = state.original.top;
+                windowEl.style.left = state.original.left;
+                windowEl.classList.remove('maximized');
+            } else {
+                state.original = {
+                    width: windowEl.style.width,
+                    height: windowEl.style.height,
+                    top: windowEl.style.top,
+                    left: windowEl.style.left
+                };
+                windowEl.style.width = '100%';
+                windowEl.style.height = 'calc(100vh - 48px)';
+                windowEl.style.top = '0';
+                windowEl.style.left = '0';
+                windowEl.classList.add('maximized');
+            }
+            
+            state.isMaximized = !state.isMaximized;
+        }
+
+        function updateTaskbar() {
+            for (const app in windows) {
+                const state = windows[app];
+                const btn = document.getElementById('taskbar-' + app);
+                const windowEl = document.getElementById(state.window);
+                
+                if (btn) {
+                    if (state.isOpen) {
+                        btn.classList.add('open');
+                        if (windowEl.classList.contains('active')) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    } else {
+                        btn.classList.remove('open', 'active');
+                    }
+                }
+            }
+        }
+
+        // Draggable Windows
+        let isDragging = false;
+        let dragWindow = null;
+        let dragOffsetX, dragOffsetY;
+
+        document.querySelectorAll('.window-titlebar').forEach(titlebar => {
+            titlebar.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.window-controls')) return;
+                
+                const windowId = titlebar.dataset.window;
+                const windowEl = document.getElementById(windowId);
+                const app = windowEl.dataset.app;
+                
+                if (windows[app].isMaximized) return;
+                
+                isDragging = true;
+                dragWindow = windowEl;
+                dragOffsetX = e.clientX - windowEl.offsetLeft;
+                dragOffsetY = e.clientY - windowEl.offsetTop;
+                
+                windowEl.style.zIndex = ++zIndex;
+            });
+
+            titlebar.addEventListener('dblclick', (e) => {
+                if (e.target.closest('.window-controls')) return;
+                const windowId = titlebar.dataset.window;
+                const windowEl = document.getElementById(windowId);
+                const app = windowEl.dataset.app;
+                maximizeWindow(app);
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging && dragWindow) {
+                dragWindow.style.left = Math.max(0, e.clientX - dragOffsetX) + 'px';
+                dragWindow.style.top = Math.max(0, e.clientY - dragOffsetY) + 'px';
+            }
+            
+            if (isResizing && resizeWindow) {
+                handleResize(e);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragWindow = null;
+            
+            if (isResizing) {
+                isResizing = false;
+                resizeWindow = null;
+                document.body.style.cursor = '';
+            }
+        });
+
+        // Resizable Windows
+        let isResizing = false;
+        let resizeWindow = null;
+        let resizeDir = '';
+        let initialX, initialY, initialWidth, initialHeight, initialTop, initialLeft;
+
+        document.querySelectorAll('.resizer').forEach(resizer => {
+            resizer.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                const windowEl = resizer.parentElement;
+                const app = windowEl.dataset.app;
+                
+                if (windows[app].isMaximized) return;
+
+                isResizing = true;
+                resizeWindow = windowEl;
+                windowEl.style.zIndex = ++zIndex;
+                
+                // Determine direction from class
+                if (resizer.classList.contains('resizer-n')) resizeDir = 'n';
+                else if (resizer.classList.contains('resizer-e')) resizeDir = 'e';
+                else if (resizer.classList.contains('resizer-s')) resizeDir = 's';
+                else if (resizer.classList.contains('resizer-w')) resizeDir = 'w';
+                else if (resizer.classList.contains('resizer-ne')) resizeDir = 'ne';
+                else if (resizer.classList.contains('resizer-nw')) resizeDir = 'nw';
+                else if (resizer.classList.contains('resizer-se')) resizeDir = 'se';
+                else if (resizer.classList.contains('resizer-sw')) resizeDir = 'sw';
+
+                initialX = e.clientX;
+                initialY = e.clientY;
+                initialWidth = windowEl.offsetWidth;
+                initialHeight = windowEl.offsetHeight;
+                initialTop = windowEl.offsetTop;
+                initialLeft = windowEl.offsetLeft;
+            });
+        });
+
+        function handleResize(e) {
+            const dx = e.clientX - initialX;
+            const dy = e.clientY - initialY;
+            
+            const minW = 320;
+            const minH = 200;
+
+            let newW = initialWidth;
+            let newH = initialHeight;
+            let newTop = initialTop;
+            let newLeft = initialLeft;
+
+            // Horizontal resizing
+            if (resizeDir.includes('e')) {
+                newW = Math.max(minW, initialWidth + dx);
+            } else if (resizeDir.includes('w')) {
+                newW = Math.max(minW, initialWidth - dx);
+                newLeft = initialLeft + (initialWidth - newW);
+            }
+
+            // Vertical resizing
+            if (resizeDir.includes('s')) {
+                newH = Math.max(minH, initialHeight + dy);
+            } else if (resizeDir.includes('n')) {
+                newH = Math.max(minH, initialHeight - dy);
+                newTop = initialTop + (initialHeight - newH);
+            }
+
+            // Apply constraints to keep window on screen partially
+            if (newTop < 0) newTop = 0;
+            
+            resizeWindow.style.width = newW + 'px';
+            resizeWindow.style.height = newH + 'px';
+            resizeWindow.style.top = newTop + 'px';
+            resizeWindow.style.left = newLeft + 'px';
+        }
+
+        // Calculator
+        let calcValue = '0';
+        let calcExpression = '';
+        let calcOperator = '';
+        let calcPrevValue = '';
+        let calcNewNumber = true;
+
+        function updateCalcDisplay() {
+            document.getElementById('calcResult').textContent = calcValue;
+            document.getElementById('calcExpression').textContent = calcExpression;
+        }
+
+        function calcInput(val) {
+            if ('0123456789.'.includes(val)) {
+                if (calcNewNumber) {
+                    calcValue = val === '.' ? '0.' : val;
+                    calcNewNumber = false;
+                } else {
+                    if (val === '.' && calcValue.includes('.')) return;
+                    calcValue += val;
+                }
+            } else {
+                if (calcPrevValue && !calcNewNumber) {
+                    calcEquals();
+                }
+                calcOperator = val;
+                calcPrevValue = calcValue;
+                calcExpression = calcValue + ' ' + val.replace('*', '×').replace('/', '÷');
+                calcNewNumber = true;
+            }
+            updateCalcDisplay();
+        }
+
+        function calcEquals() {
+            if (!calcPrevValue || !calcOperator) return;
+            
+            const prev = parseFloat(calcPrevValue);
+            const current = parseFloat(calcValue);
+            let result;
+            
+            switch (calcOperator) {
+                case '+': result = prev + current; break;
+                case '-': result = prev - current; break;
+                case '*': result = prev * current; break;
+                case '/': result = current !== 0 ? prev / current : 'Error'; break;
+                default: return;
+            }
+            
+            calcExpression = calcPrevValue + ' ' + calcOperator.replace('*', '×').replace('/', '÷') + ' ' + calcValue + ' =';
+            calcValue = String(result);
+            calcPrevValue = '';
+            calcOperator = '';
+            calcNewNumber = true;
+            updateCalcDisplay();
+        }
+
+        function calcClear() {
+            calcValue = '0';
+            calcExpression = '';
+            calcOperator = '';
+            calcPrevValue = '';
+            calcNewNumber = true;
+            updateCalcDisplay();
+        }
+
+        function calcCE() {
+            calcValue = '0';
+            calcNewNumber = true;
+            updateCalcDisplay();
+        }
+
+        function calcBackspace() {
+            if (calcValue.length > 1) {
+                calcValue = calcValue.slice(0, -1);
+            } else {
+                calcValue = '0';
+            }
+            updateCalcDisplay();
+        }
+
+        function calcNegate() {
+            calcValue = String(-parseFloat(calcValue));
+            updateCalcDisplay();
+        }
+
+        function calcPercent() {
+            calcValue = String(parseFloat(calcValue) / 100);
+            updateCalcDisplay();
+        }
+
+        function calcSquare() {
+            const val = parseFloat(calcValue);
+            calcExpression = `sqr(${calcValue})`;
+            calcValue = String(val * val);
+            calcNewNumber = true;
+            updateCalcDisplay();
+        }
+
+        function calcSqrt() {
+            const val = parseFloat(calcValue);
+            calcExpression = `√(${calcValue})`;
+            calcValue = String(Math.sqrt(val));
+            calcNewNumber = true;
+            updateCalcDisplay();
+        }
+
+        // Settings - Wallpaper
+        function setWallpaper(num, el) {
+            const desktop = document.getElementById('desktop');
+            desktop.className = 'desktop wallpaper-' + num;
+            
+            document.querySelectorAll('.wallpaper-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            el.classList.add('selected');
+        }
+
+        // Focus window on click
+        document.querySelectorAll('.window').forEach(windowEl => {
+            windowEl.addEventListener('mousedown', () => {
+                windowEl.style.zIndex = ++zIndex;
+            });
+        });
+
+        // Keyboard support for calculator
+        document.addEventListener('keydown', (e) => {
+            if (!windows.calculator.isOpen) return;
+            
+            const key = e.key;
+            if ('0123456789.'.includes(key)) calcInput(key);
+            else if (key === '+') calcInput('+');
+            else if (key === '-') calcInput('-');
+            else if (key === '*') calcInput('*');
+            else if (key === '/') calcInput('/');
+            else if (key === 'Enter' || key === '=') calcEquals();
+            else if (key === 'Escape') calcClear();
+            else if (key === 'Backspace') calcBackspace();
+        });
+    </script>
+</body>
+</html>
