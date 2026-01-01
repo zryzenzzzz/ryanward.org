@@ -1829,6 +1829,12 @@
 
             const windowEl = document.getElementById(state.window);
 
+            // Toggle behavior: if window is already open and active, close it
+            if (state.isOpen && windowEl.classList.contains('active')) {
+                closeWindow(app);
+                return;
+            }
+
             // When opening resume normally, ensure we are not in full-resume mode
             if (app === 'resume') {
                 document.body.classList.remove('full-resume-open');
