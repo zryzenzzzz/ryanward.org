@@ -770,19 +770,95 @@
             justify-content: center;
             overflow: hidden;
             cursor: text;
+            position: relative;
+        }
+
+        .texter-input-wrapper {
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+            text-align: center;
         }
 
         .texter-input {
-            width: 80%;
-            max-width: 800px;
+            width: 100%;
             color: white;
             font-size: 80px;
             font-weight: 300;
             text-align: center;
             outline: none;
             border: none;
+            background: transparent;
             white-space: pre-wrap;
             word-wrap: break-word;
+            user-select: text;
+        }
+
+        .texter-input:empty::before {
+            content: attr(data-placeholder);
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        .texter-input.hidden-text {
+            color: transparent;
+        }
+
+        .texter-input.hidden-text::selection {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hide Text Button */
+        .hide-text-btn {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            z-index: 10;
+        }
+
+        .hide-text-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .hide-text-btn:active {
+            transform: scale(0.97);
+        }
+
+        .hide-text-btn .h-icon {
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+        }
+
+        .hide-text-btn .h-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .hide-text-btn.active .h-icon {
+            color: white;
+        }
+
+        .hide-text-btn.active .h-label {
+            color: white;
         }
 
         /* Files App */
@@ -1556,8 +1632,14 @@
                 </div>
             </div>
             <div class="window-content">
-                <div class="texter-app" onclick="document.getElementById('texterInput').focus()">
-                    <div class="texter-input" id="texterInput" contenteditable="true" spellcheck="false" oninput="updateTexterSize(this)">Type something...</div>
+                <div class="texter-app" onclick="focusTexterInput(event)">
+                    <div class="texter-input-wrapper">
+                        <div class="texter-input" id="texterInput" contenteditable="true" spellcheck="false" data-placeholder="Type something..." oninput="updateTexterSize(this)"></div>
+                    </div>
+                    <div class="hide-text-btn" id="hideTextBtn" onclick="toggleHideText(event)">
+                        <div class="h-icon">Alt + H</div>
+                        <span class="h-label">Hide text</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1793,6 +1875,9 @@
         // Full resume toggle state
         let fullResumeOpen = false;
 
+        // Texter hide text state
+        let texterHidden = false;
+
         // Capture default size/position for each window so they always open the same way
         function captureWindowDefaults() {
             for (const app in windows) {
@@ -1868,6 +1953,43 @@
 
             el.style.fontSize = size + 'px';
         }
+
+        function focusTexterInput(event) {
+            // Don't focus if clicking on the hide button
+            if (event.target.closest('.hide-text-btn')) return;
+            const input = document.getElementById('texterInput');
+            input.focus();
+        }
+
+        function toggleHideText(event) {
+            if (event) event.stopPropagation();
+            const input = document.getElementById('texterInput');
+            const btn = document.getElementById('hideTextBtn');
+            const label = btn.querySelector('.h-label');
+            
+            texterHidden = !texterHidden;
+            
+            if (texterHidden) {
+                input.classList.add('hidden-text');
+                btn.classList.add('active');
+                label.textContent = 'Show text';
+            } else {
+                input.classList.remove('hidden-text');
+                btn.classList.remove('active');
+                label.textContent = 'Hide text';
+            }
+        }
+
+        // Alt + H keyboard shortcut for hide text in Texter
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && (e.key === 'h' || e.key === 'H')) {
+                // Only toggle if texter window is open
+                if (windows.texter.isOpen) {
+                    e.preventDefault();
+                    toggleHideText(null);
+                }
+            }
+        });
 
         // Start Menu
         function toggleStartMenu() {
