@@ -3,27 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ryan Ward & Xylan Taylor — Da Vinci Connect</title>
+  <title>Ryan Ward — Da Vinci Connect</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
 
-    html {
-      scroll-behavior: smooth;
-    }
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       min-height: 100vh;
       background: url('https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/screenshot-2019-01-18-at-10-33-57-am_1.png?raw=true') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       color: #f5f5f5;
       line-height: 1.5;
-      overflow-x: hidden;
       position: relative;
     }
 
@@ -31,309 +24,189 @@
       content: '';
       position: fixed;
       inset: 0;
-      background: linear-gradient(to bottom, rgba(8, 12, 28, 0.92) 0%, rgba(8, 12, 28, 0.80) 40%, rgba(8, 12, 28, 0.68) 100%);
+      background: linear-gradient(to bottom, rgba(8,12,28,0.9), rgba(8,12,28,0.7));
       z-index: 0;
     }
 
-    /* ── Subtle Particles (optional – comment out the div + script below if unwanted) ── */
-    .particles {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      overflow: hidden;
+    .main-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem 1.5rem 4rem;
     }
 
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(220, 190, 80, 0.25);
-      animation: drift linear infinite;
-    }
-
-    @keyframes drift {
-      0%   { transform: translateY(100vh) scale(0.4); opacity: 0; }
-      10%  { opacity: 0.7; }
-      60%  { opacity: 0.4; }
-      100% { transform: translateY(-20vh) scale(0.8); opacity: 0; }
-    }
-
-    /* ── Back Button ── */
+    /* BACK ARROW */
     .back-arrow {
       position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
+      top: 1.2rem;
+      left: 1.2rem;
       z-index: 1000;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 3rem;
-      height: 3rem;
-      background: rgba(255, 255, 255, 0.07);
-      border-radius: 50%;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.25s ease;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .back-arrow:hover {
-      background: rgba(255, 255, 255, 0.14);
-      transform: translateX(-3px);
-    }
-
-    .back-arrow svg {
-      width: 1.5rem;
-      height: 1.5rem;
-      stroke: #ffffff;
-      stroke-width: 2.2;
-      transition: transform 0.3s ease;
-    }
-
-    .back-arrow:hover svg {
+      background: rgba(255,255,255,0.16);
       transform: translateX(-2px);
     }
 
-    /* ── Header ── */
-    .top-header {
-      position: relative;
-      z-index: 10;
-      padding: 7rem 1.5rem 4rem;     /* more top space for the larger logo */
+    .back-arrow svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    /* IMAGE (NO BORDER, CLEAN) */
+    .top-image {
+      margin-bottom: 2.5rem;
       text-align: center;
     }
 
-    .davinci-logo-top {
-      width: 14rem;                   /* significantly increased size */
-      height: 14rem;
+    .top-image img {
+      width: 100%;
+      height: auto;
       object-fit: contain;
-      margin-bottom: 2.5rem;
-      filter: drop-shadow(0 6px 24px rgba(0,0,0,0.55));
+      display: block;
+    }
+
+    .top-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .davinci-logo-top {
+      width: 11rem;
+      margin-bottom: 1.5rem;
     }
 
     .school-name {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #ffffff;
     }
 
     .school-tagline {
-      font-size: 1rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.2em;
     }
 
-    /* ── Main ── */
     .main-content {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 20rem);
-      padding: 2rem 1.5rem 6rem;
-    }
-
-    .emblem-section {
-      margin-bottom: 4rem;
-      position: relative;
       text-align: center;
     }
 
     .emblem-logo {
-      width: 18rem;
-      max-width: 90vw;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 32px rgba(0,0,0,0.55));
-      transition: transform 0.35s ease;
-    }
-
-    .emblem-logo:hover {
-      transform: scale(1.03);
-    }
-
-    .campaign-block {
-      text-align: center;
-      max-width: 52rem;
+      width: 15rem;
+      margin-bottom: 2rem;
     }
 
     .candidate-name {
-      font-size: 4.8rem;
+      font-size: 4rem;
       font-weight: 800;
-      line-height: 1;
-      color: #ffffff;
-      margin: 0;
-    }
-
-    .ampersand {
-      font-size: 3.6rem;
-      font-weight: 600;
-      color: rgba(255,255,255,0.45);
-      margin: 1rem 0;
-      display: block;
-    }
-
-    .for-label {
-      font-size: 1.1rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.4em;
-      color: rgba(255,255,255,0.55);
-      margin: 2rem 0 0.75rem;
     }
 
     .position-title {
-      font-size: 2.1rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: #ffffff;
+      font-size: 1.6rem;
+      margin-top: 1rem;
+      letter-spacing: 0.08em;
     }
 
-    /* ── Footer ── */
-    .footer-bar {
-      position: relative;
-      z-index: 10;
-      padding: 2.5rem 1.5rem;
+    .policies {
+      margin-top: 3.5rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .policies h3 {
       text-align: center;
-      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+      margin-bottom: 1.8rem;
+      letter-spacing: 0.2em;
     }
 
-    .footer-bar p {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: rgba(255,255,255,0.45);
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
+    .policies ul {
+      list-style: none;
+      padding: 0;
+      color: rgba(255,255,255,0.85);
     }
 
-    /* ── Flag Stripe ── */
-    .flag-stripe {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      z-index: 999;
-      display: flex;
+    .policies li {
+      margin-bottom: 1rem;
+      line-height: 1.6;
     }
 
-    .flag-stripe span { flex: 1; }
-    .flag-stripe span:nth-child(1) { background: #BF0A30; }
-    .flag-stripe span:nth-child(2) { background: #FFFFFF; }
-    .flag-stripe span:nth-child(3) { background: #002868; }
-    .flag-stripe span:nth-child(4) { background: #FFD700; }
-    .flag-stripe span:nth-child(5) { background: #BF0A30; }
-
-    /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .top-header { 
-        padding-top: 5.5rem; 
-        padding-bottom: 3.5rem;
-      }
-      .davinci-logo-top { 
-        width: 11rem;
-        height: 11rem;
-        margin-bottom: 2rem;
-      }
-      .school-name { font-size: 2.1rem; }
-      .candidate-name { font-size: 3.8rem; }
-      .ampersand { font-size: 3rem; }
-      .position-title { font-size: 1.8rem; }
-      .emblem-logo { width: 15rem; }
+    .footer-bar {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(255,255,255,0.5);
     }
 
-    @media (max-width: 480px) {
-      .top-header { 
-        padding-top: 4.5rem; 
-      }
-      .davinci-logo-top { 
-        width: 9.5rem;
-        height: 9.5rem;
-        margin-bottom: 1.75rem;
-      }
-      .school-name { font-size: 1.8rem; }
-      .candidate-name { font-size: 3.2rem; }
-      .ampersand { font-size: 2.5rem; }
-      .for-label { font-size: 1rem; letter-spacing: 0.3em; }
-      .position-title { font-size: 1.5rem; letter-spacing: 0.15em; }
-      .emblem-logo { width: 12rem; }
+    @media (max-width: 600px) {
+      .candidate-name { font-size: 2.8rem; }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Particles (comment out if you don't want them) -->
-  <div class="particles" id="particles"></div>
+<!-- Back Arrow -->
+<a href="https://ryanward.org" class="back-arrow" aria-label="Back">
+  <svg viewBox="0 0 24 24">
+    <line x1="19" y1="12" x2="5" y2="12"></line>
+    <polyline points="12 19 5 12 12 5"></polyline>
+  </svg>
+</a>
 
-  <!-- Back Arrow -->
-  <a href="https://ryanward.org" class="back-arrow" title="Back to ryanward.org" aria-label="Back">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12"></line>
-      <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-  </a>
+<div class="main-wrapper">
 
-  <!-- Header with bigger logo -->
-  <header class="top-header">
-    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/Davinci.png?raw=true" 
-         alt="Da Vinci Connect Logo" 
-         class="davinci-logo-top">
+  <!-- IMAGE -->
+  <div class="top-image">
+    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/12345555.png?raw=true" alt="Campaign Banner">
+  </div>
+
+  <!-- Header -->
+  <div class="top-header">
+    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/Davinci.png?raw=true" class="davinci-logo-top">
     <h1 class="school-name">Da Vinci Connect</h1>
     <p class="school-tagline">Student Government Election 2026</p>
-  </header>
+  </div>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <div class="emblem-section">
-      <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/121212e.png?raw=true" 
-           alt="Campaign Emblem" 
-           class="emblem-logo">
-    </div>
+  <!-- Main -->
+  <div class="main-content">
+    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/121212e.png?raw=true" class="emblem-logo">
 
-    <div class="campaign-block">
-      <h2 class="candidate-name">Ryan Ward</h2>
-      <span class="ampersand">&</span>
-      <h2 class="candidate-name">Xylan Taylor</h2>
-      <span class="for-label">— for —</span>
-      <span class="position-title">President & Vice President</span>
-    </div>
-  </main>
+    <h2 class="candidate-name">Ryan Ward</h2>
+    <div class="position-title">For President</div>
+  </div>
 
-  <!-- Footer -->
+  <!-- Policies -->
+  <div class="policies">
+    <h3>POLICIES</h3>
+    <ul>
+      <li><strong>Education & Opportunity:</strong> Real skills, mentorship, real-world experience.</li>
+      <li><strong>Transparent Communication:</strong> Open updates and honest reporting.</li>
+      <li><strong>Accountability:</strong> Plans, deadlines, and results shared back.</li>
+      <li><strong>Better School Lunches:</strong> Healthier meals for better focus.</li>
+      <li><strong>Access to Computers:</strong> Equal tech access for every student.</li>
+      <li><strong>Real-World Skills & Mentorship:</strong> Support beyond graduation.</li>
+    </ul>
+  </div>
+
   <footer class="footer-bar">
     <p>Da Vinci Connect — Leadership That Matters</p>
   </footer>
 
-  <!-- Flag Stripe -->
-  <div class="flag-stripe">
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
+</div>
 
-  <script>
-    // Optional subtle particles
-    (function () {
-      const container = document.getElementById('particles');
-      if (!container) return;
-      const count = 18;
-      for (let i = 0; i < count; i++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        const size = Math.random() * 3 + 1.5;
-        p.style.width = size + 'px';
-        p.style.height = size + 'px';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDuration = (Math.random() * 25 + 18) + 's';
-        p.style.animationDelay = (Math.random() * 15) + 's';
-        container.appendChild(p);
-      }
-    })();
-  </script>
 </body>
 </html>
