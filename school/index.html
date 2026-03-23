@@ -4,124 +4,130 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ryan Ward & Xyland Taylor — Da Vinci Connect</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       min-height: 100vh;
       background: url('https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/screenshot-2019-01-18-at-10-33-57-am_1.png?raw=true') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      color: #ffffff;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #f5f5f5;
+      line-height: 1.5;
       overflow-x: hidden;
       position: relative;
     }
+
     body::before {
       content: '';
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: linear-gradient(180deg, rgba(10,15,30,0.78) 0%, rgba(10,15,30,0.55) 30%, rgba(10,15,30,0.42) 55%, rgba(10,15,30,0.58) 80%, rgba(10,15,30,0.85) 100%);
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(8, 12, 28, 0.92) 0%, rgba(8, 12, 28, 0.80) 40%, rgba(8, 12, 28, 0.68) 100%);
       z-index: 0;
     }
 
-    /* ── Particles ── */
+    /* ── Subtle Particles (optional – comment out the div + script below if unwanted) ── */
     .particles {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       z-index: 1;
       pointer-events: none;
       overflow: hidden;
     }
+
     .particle {
       position: absolute;
       border-radius: 50%;
-      animation: floatParticle linear infinite;
-    }
-    @keyframes floatParticle {
-      0% { transform: translateY(110vh) translateX(0) scale(0); opacity: 0; }
-      8%  { opacity: 1; }
-      50% { transform: translateY(50vh) translateX(30px) scale(1); }
-      92% { opacity: 1; }
-      100% { transform: translateY(-10vh) translateX(-20px) scale(0.5); opacity: 0; }
+      background: rgba(220, 190, 80, 0.25);
+      animation: drift linear infinite;
     }
 
-    /* ── Simple Back Arrow ── */
+    @keyframes drift {
+      0%   { transform: translateY(100vh) scale(0.4); opacity: 0; }
+      10%  { opacity: 0.7; }
+      60%  { opacity: 0.4; }
+      100% { transform: translateY(-20vh) scale(0.8); opacity: 0; }
+    }
+
+    /* ── Back Button ── */
     .back-arrow {
       position: fixed;
-      top: 24px;
-      left: 24px;
+      top: 1.5rem;
+      left: 1.5rem;
       z-index: 1000;
-      color: #ffffff;
-      text-decoration: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 48px;
-      height: 48px;
-      background: rgba(255,255,255,0.08);
+      width: 3rem;
+      height: 3rem;
+      background: rgba(255, 255, 255, 0.07);
       border-radius: 50%;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s ease;
     }
+
     .back-arrow:hover {
-      background: rgba(255,255,255,0.18);
-      transform: translateX(-4px);
-    }
-    .back-arrow svg {
-      width: 24px;
-      height: 24px;
-      stroke: #ffffff;
-      stroke-width: 2.5;
-      transition: transform 0.3s ease;
-    }
-    .back-arrow:hover svg {
+      background: rgba(255, 255, 255, 0.14);
       transform: translateX(-3px);
     }
 
-    /* ── Top Header ── */
+    .back-arrow svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      stroke: #ffffff;
+      stroke-width: 2.2;
+      transition: transform 0.3s ease;
+    }
+
+    .back-arrow:hover svg {
+      transform: translateX(-2px);
+    }
+
+    /* ── Header ── */
     .top-header {
       position: relative;
       z-index: 10;
-      width: 100%;
-      padding: 40px 20px 30px;
+      padding: 7rem 1.5rem 4rem;     /* more top space for the larger logo */
       text-align: center;
     }
+
     .davinci-logo-top {
-      width: 140px;
-      height: 140px;
+      width: 14rem;                   /* significantly increased size */
+      height: 14rem;
       object-fit: contain;
-      filter: drop-shadow(0 6px 24px rgba(255,215,0,0.3));
-      margin-bottom: 16px;
-      animation: logoPulseTop 6s ease-in-out infinite;
-    }
-    @keyframes logoPulseTop {
-      0%, 100% { filter: drop-shadow(0 6px 24px rgba(255,215,0,0.3)); }
-      50%      { filter: drop-shadow(0 8px 40px rgba(255,215,0,0.55)); }
-    }
-    .school-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 34px;
-      font-weight: 900;
-      color: #ffffff;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      text-shadow: 0 3px 20px rgba(0,0,0,0.8);
-    }
-    .school-tagline {
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      margin-top: 10px;
+      margin-bottom: 2.5rem;
+      filter: drop-shadow(0 6px 24px rgba(0,0,0,0.55));
     }
 
-    /* ── Main Content ── */
+    .school-name {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .school-tagline {
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-top: 0.75rem;
+    }
+
+    /* ── Main ── */
     .main-content {
       position: relative;
       z-index: 10;
@@ -129,84 +135,64 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: calc(100vh - 240px);
-      padding: 40px 20px 100px;
+      min-height: calc(100vh - 20rem);
+      padding: 2rem 1.5rem 6rem;
     }
 
-    /* ── Emblem Section ── */
     .emblem-section {
+      margin-bottom: 4rem;
       position: relative;
-      margin-bottom: 60px;
-    }
-    .emblem-glow {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 380px; height: 380px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,215,0,0.10) 0%, transparent 70%);
-      animation: glowBreath 6s ease-in-out infinite;
-    }
-    @keyframes glowBreath {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-      50%      { transform: translate(-50%, -50%) scale(1.15); opacity: 0.9; }
-    }
-    .emblem-logo {
-      width: 280px;
-      height: 280px;
-      object-fit: contain;
-      position: relative;
-      z-index: 5;
-      filter: drop-shadow(0 0 35px rgba(0,0,0,0.6));
-      animation: emblemFloat 8s ease-in-out infinite;
-      transition: transform 0.4s ease;
-    }
-    .emblem-logo:hover {
-      transform: scale(1.06);
-    }
-    @keyframes emblemFloat {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-16px); }
+      text-align: center;
     }
 
-    /* ── Campaign Text ── */
+    .emblem-logo {
+      width: 18rem;
+      max-width: 90vw;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 32px rgba(0,0,0,0.55));
+      transition: transform 0.35s ease;
+    }
+
+    .emblem-logo:hover {
+      transform: scale(1.03);
+    }
+
     .campaign-block {
       text-align: center;
-      max-width: 900px;
+      max-width: 52rem;
     }
+
     .candidate-name {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      font-size: 64px;
-      font-weight: 900;
-      line-height: 1.05;
-      letter-spacing: 1px;
+      font-size: 4.8rem;
+      font-weight: 800;
+      line-height: 1;
       color: #ffffff;
-      text-shadow: 0 4px 25px rgba(0,0,0,0.7);
-      margin-bottom: 4px;
+      margin: 0;
     }
+
     .ampersand {
-      font-size: 52px;
-      font-style: normal;
-      font-weight: 700;
-      color: rgba(255,255,255,0.55);
+      font-size: 3.6rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.45);
+      margin: 1rem 0;
       display: block;
-      margin: 8px 0;
     }
+
     .for-label {
-      display: block;
-      font-size: 16px;
+      font-size: 1.1rem;
       font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 12px;
-      color: rgba(255,255,255,0.6);
-      margin: 28px 0 12px;
+      letter-spacing: 0.4em;
+      color: rgba(255,255,255,0.55);
+      margin: 2rem 0 0.75rem;
     }
+
     .position-title {
-      display: block;
-      font-size: 32px;
+      font-size: 2.1rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 6px;
+      letter-spacing: 0.18em;
       color: #ffffff;
     }
 
@@ -214,27 +200,30 @@
     .footer-bar {
       position: relative;
       z-index: 10;
-      width: 100%;
-      padding: 20px 0;
+      padding: 2.5rem 1.5rem;
       text-align: center;
-      background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
     }
+
     .footer-bar p {
-      font-size: 12px;
+      font-size: 0.85rem;
       font-weight: 500;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.45);
       text-transform: uppercase;
-      letter-spacing: 4px;
+      letter-spacing: 0.18em;
     }
 
     /* ── Flag Stripe ── */
     .flag-stripe {
       position: fixed;
-      bottom: 0; left: 0;
-      width: 100%; height: 4px;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
       z-index: 999;
       display: flex;
     }
+
     .flag-stripe span { flex: 1; }
     .flag-stripe span:nth-child(1) { background: #BF0A30; }
     .flag-stripe span:nth-child(2) { background: #FFFFFF; }
@@ -242,43 +231,60 @@
     .flag-stripe span:nth-child(4) { background: #FFD700; }
     .flag-stripe span:nth-child(5) { background: #BF0A30; }
 
-    /* Responsive */
+    /* ── Responsive ── */
     @media (max-width: 768px) {
-      .back-arrow { top: 16px; left: 16px; width: 44px; height: 44px; }
-      .back-arrow svg { width: 22px; height: 22px; }
-      .davinci-logo-top { width: 100px; height: 100px; }
-      .school-name { font-size: 26px; letter-spacing: 5px; }
-      .candidate-name { font-size: 46px; }
-      .ampersand { font-size: 38px; }
-      .position-title { font-size: 24px; }
-      .emblem-logo { width: 220px; height: 220px; }
-      .emblem-glow { width: 300px; height: 300px; }
+      .top-header { 
+        padding-top: 5.5rem; 
+        padding-bottom: 3.5rem;
+      }
+      .davinci-logo-top { 
+        width: 11rem;
+        height: 11rem;
+        margin-bottom: 2rem;
+      }
+      .school-name { font-size: 2.1rem; }
+      .candidate-name { font-size: 3.8rem; }
+      .ampersand { font-size: 3rem; }
+      .position-title { font-size: 1.8rem; }
+      .emblem-logo { width: 15rem; }
     }
+
     @media (max-width: 480px) {
-      .candidate-name { font-size: 36px; }
-      .ampersand { font-size: 30px; }
-      .for-label { font-size: 13px; letter-spacing: 8px; }
-      .position-title { font-size: 20px; letter-spacing: 4px; }
-      .emblem-logo { width: 180px; height: 180px; }
+      .top-header { 
+        padding-top: 4.5rem; 
+      }
+      .davinci-logo-top { 
+        width: 9.5rem;
+        height: 9.5rem;
+        margin-bottom: 1.75rem;
+      }
+      .school-name { font-size: 1.8rem; }
+      .candidate-name { font-size: 3.2rem; }
+      .ampersand { font-size: 2.5rem; }
+      .for-label { font-size: 1rem; letter-spacing: 0.3em; }
+      .position-title { font-size: 1.5rem; letter-spacing: 0.15em; }
+      .emblem-logo { width: 12rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Particles -->
+  <!-- Particles (comment out if you don't want them) -->
   <div class="particles" id="particles"></div>
 
   <!-- Back Arrow -->
-  <a href="https://ryanward.org" class="back-arrow" title="Back to ryanward.org">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <a href="https://ryanward.org" class="back-arrow" title="Back to ryanward.org" aria-label="Back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
   </a>
 
-  <!-- Top Header -->
+  <!-- Header with bigger logo -->
   <header class="top-header">
-    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/Davinci.png?raw=true" alt="Da Vinci Connect Logo" class="davinci-logo-top">
+    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/Davinci.png?raw=true" 
+         alt="Da Vinci Connect Logo" 
+         class="davinci-logo-top">
     <h1 class="school-name">Da Vinci Connect</h1>
     <p class="school-tagline">Student Government Election 2026</p>
   </header>
@@ -286,8 +292,9 @@
   <!-- Main Content -->
   <main class="main-content">
     <div class="emblem-section">
-      <div class="emblem-glow"></div>
-      <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/121212e.png?raw=true" alt="Campaign Emblem" class="emblem-logo">
+      <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/121212e.png?raw=true" 
+           alt="Campaign Emblem" 
+           class="emblem-logo">
     </div>
 
     <div class="campaign-block">
@@ -310,27 +317,20 @@
   </div>
 
   <script>
-    // Generate particles
+    // Optional subtle particles
     (function () {
       const container = document.getElementById('particles');
-      const count = 35;
-      const palette = [
-        'rgba(255,215,0,0.5)',
-        'rgba(255,255,255,0.35)',
-        'rgba(255,165,0,0.4)',
-        'rgba(255,223,100,0.45)',
-        'rgba(255,200,50,0.4)'
-      ];
+      if (!container) return;
+      const count = 18;
       for (let i = 0; i < count; i++) {
         const p = document.createElement('div');
         p.classList.add('particle');
-        const size = Math.random() * 4 + 2;
+        const size = Math.random() * 3 + 1.5;
         p.style.width = size + 'px';
         p.style.height = size + 'px';
         p.style.left = Math.random() * 100 + '%';
-        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
-        p.style.animationDelay = (Math.random() * 18) + 's';
-        p.style.background = palette[Math.floor(Math.random() * palette.length)];
+        p.style.animationDuration = (Math.random() * 25 + 18) + 's';
+        p.style.animationDelay = (Math.random() * 15) + 's';
         container.appendChild(p);
       }
     })();
