@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect 4 - Multiplayer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #ccc;
+        }
+
+        .container {
+            background: #2b2b2b;
+            border-radius: 8px;
+            padding: 35px 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+            max-width: 1200px;
+            width: 100%;
+            border: 1px solid #444;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #555;
+            padding-bottom: 15px;
+        }
+
+        .setup {
+            text-align: center;
+        }
+
+        .player-count {
+            margin-bottom: 30px;
+        }
+
+        .player-count label {
+            font-size: 1.1em;
+            color: #aaa;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+
+        .player-count button {
+            background: #3a3a3a;
+            color: #ccc;
+            border: 1px solid #555;
+            padding: 9px 18px;
+            margin: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .player-count button:hover {
+            background: #4a4a4a;
+            border-color: #888;
+        }
+
+        .player-count button.active {
+            background: #5a5a5a;
+            border-color: #aaa;
+            color: #fff;
+        }
+
+        .player-setup {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .player-config {
+            background: #222;
+            padding: 18px;
+            border-radius: 6px;
+            border: 1px solid #3f3f3f;
+        }
+
+        .player-config label {
+            display: block;
+            margin-bottom: 8px;
+            color: #bbb;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .player-config input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #ddd;
+            font-size: 0.95em;
+            transition: border 0.2s;
+        }
+
+        .player-config input[type="text"]:focus {
+            outline: none;
+            border-color: #777;
+        }
+
+        .color-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin: 10px auto;
+            border: 2px solid #555;
+        }
+
+        .player-config input[type="color"] {
+            width: 100%;
+            height: 30px;
+            padding: 2px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .start-btn {
+            background: #555;
+            color: #eee;
+            border: 1px solid #777;
+            padding: 14px 45px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .start-btn:hover {
+            background: #6a6a6a;
+            border-color: #999;
+        }
+
+        .game-board {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .current-player {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding: 12px 25px;
+            background: #222;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #3f3f3f;
+            color: #ddd;
+        }
+
+        .current-player-disc {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #666;
+        }
+
+        .board-container {
+            perspective: 800px;
+            margin-bottom: 20px;
+        }
+
+        .board {
+            background: #3a3a3a;
+            border-radius: 10px;
+            padding: 18px;
+            display: inline-block;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+            border: 1px solid #4f4f4f;
+        }
+
+        .grid {
+            display: grid;
+            gap: 8px;
+            position: relative;
+        }
+
+        .cell {
+            width: 58px;
+            height: 58px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
+            border: 1px solid #2f2f2f;
+        }
+
+        .cell:hover {
+            background: #2a2a2a;
+        }
+
+        .disc {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: 2px solid rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .winning-disc {
+            animation: glow 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor;
+                transform: scale(1);
+            }
+            to {
+                box-shadow: 0 0 16px currentColor, 0 0 28px currentColor, 0 0 40px currentColor;
+                transform: scale(1.04);
+            }
+        }
+
+        @keyframes drop {
+            from {
+                transform: translateY(var(--drop-distance));
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .game-over {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 1.8em;
+            color: #e0e0e0;
+            font-weight: 600;
+            background: #222;
+            padding: 15px 30px;
+            border-radius: 6px;
+            border: 1px solid #3f3f3f;
+        }
+
+        .winner-name {
+            color: #fff;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .reset-btn {
+            background: #4a4a4a;
+            color: #ddd;
+            border: 1px solid #666;
+            padding: 14px 40px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.2s;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .reset-btn:hover {
+            background: #5a5a5a;
+            border-color: #888;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .cell { width: 40px; height: 40px; }
+            .board { padding: 10px; }
+            .grid { gap: 5px; }
+            .player-setup { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CONNECT 4</h1>
+        
+        <div class="setup" id="setup">
+            <div class="player-count">
+                <label>Players:</label>
+                <button class="player-btn active" data-players="2">2</button>
+                <button class="player-btn" data-players="3">3</button>
+                <button class="player-btn" data-players="4">4</button>
+                <button class="player-btn" data-players="5">5</button>
+            </div>
+
+            <div class="player-setup" id="playerSetup">
+                <!-- Player configs inserted here -->
+            </div>
+
+            <button class="start-btn" onclick="startGame()">START</button>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="current-player" id="currentPlayer">
+                <span>TURN:</span>
+                <div class="current-player-disc" id="currentPlayerDisc"></div>
+                <span id="currentPlayerName"></span>
+            </div>
+
+            <div class="board-container">
+                <div class="board">
+                    <div class="grid" id="grid"></div>
+                </div>
+            </div>
+
+            <div class="game-over hidden" id="gameOver">
+                <div>GAME OVER</div>
+                <div class="winner-name" id="winnerName"></div>
+            </div>
+
+            <button class="reset-btn" onclick="resetGame()">NEW GAME</button>
+        </div>
+    </div>
+
+    <script>
+        let playerCount = 2;
+        let players = [];
+        let currentPlayerIndex = 0;
+        let board = [];
+        let rows = 6;
+        let cols = 7;
+        let gameActive = false;
+
+        const defaultColors = ['#e74c3c', '#3498db', '#f39c12', '#2ecc71', '#9b59b6'];
+        const defaultNames = ['Red', 'Blue', 'Orange', 'Green', 'Purple'];
+
+        function initPlayerSetup() {
+            const playerSetup = document.getElementById('playerSetup');
+            playerSetup.innerHTML = '';
+            
+            for (let i = 0; i < playerCount; i++) {
+                const div = document.createElement('div');
+                div.className = 'player-config';
+                div.innerHTML = `
+                    <label>Player ${i + 1}</label>
+                    <input type="text" id="playerName${i}" placeholder="Enter name" value="${defaultNames[i]}">
+                    <div class="color-preview" style="background:${defaultColors[i]}"></div>
+                    <input type="color" id="playerColor${i}" value="${defaultColors[i]}" 
+                           onchange="updateColorPreview(${i})">
+                `;
+                playerSetup.appendChild(div);
+            }
+        }
+
+        function updateColorPreview(index) {
+            const color = document.getElementById(`playerColor${index}`).value;
+            document.querySelectorAll('.color-preview')[index].style.background = color;
+        }
+
+        // Player count selection
+        document.querySelectorAll('.player-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                playerCount = parseInt(this.dataset.players);
+                
+                // Adjust board size based on player count
+                if (playerCount === 2) { rows = 6; cols = 7; }
+                else if (playerCount === 3) { rows = 7; cols = 8; }
+                else if (playerCount === 4) { rows = 8; cols = 9; }
+                else if (playerCount === 5) { rows = 9; cols = 10; }
+                
+                initPlayerSetup();
+            });
+        });
+
+        function startGame() {
+            players = [];
+            for (let i = 0; i < playerCount; i++) {
+                const name = document.getElementById(`playerName${i}`).value.trim() || defaultNames[i];
+                const color = document.getElementById(`playerColor${i}`).value;
+                players.push({ name, color });
+            }
+            
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('gameBoard').style.display = 'flex';
+            initBoard();
+            gameActive = true;
+            updateCurrentPlayer();
+        }
+
+        function initBoard() {
+            board = Array(rows).fill().map(() => Array(cols).fill(null));
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(${cols}, 58px)`;
+            grid.style.gridTemplateRows = `repeat(${rows}, 58px)`;
+            
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.addEventListener('click', function() {
+                        handleCellClick(c);
+                    });
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function updateCurrentPlayer() {
+            const player = players[currentPlayerIndex];
+            document.getElementById('currentPlayerName').textContent = player.name;
+            document.getElementById('currentPlayerDisc').style.background = player.color;
+        }
+
+        function handleCellClick(col) {
+            if (!gameActive) return;
+            
+            const row = getLowestEmptyRow(col);
+            if (row === -1) return; // Column is full
+            
+            board[row][col] = currentPlayerIndex;
+            dropDisc(row, col);
+        }
+
+        function getLowestEmptyRow(col) {
+            for (let r = rows - 1; r >= 0; r--) {
+                if (board[r][col] === null) return r;
+            }
+            return -1;
+        }
+
+        function dropDisc(row, col) {
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            const disc = document.createElement('div');
+            disc.className = 'disc';
+            disc.style.background = players[currentPlayerIndex].color;
+            
+            // Calculate drop distance
+            const dropDistance = (row + 1) * 66; // 58px cell + 8px gap
+            disc.style.setProperty('--drop-distance', `-${dropDistance}px`);
+            disc.style.animation = 'drop 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
+            
+            cell.appendChild(disc);
+
+            setTimeout(() => {
+                if (checkWin(row, col)) {
+                    gameActive = false;
+                    highlightWinningDiscs();
+                    showWinner();
+                } else if (isBoardFull()) {
+                    gameActive = false;
+                    showDraw();
+                } else {
+                    currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+                    updateCurrentPlayer();
+                }
+            }, 500);
+        }
+
+        function checkWin(row, col) {
+            const player = board[row][col];
+            return checkDirection(row, col, 0, 1, player) ||  // Horizontal
+                   checkDirection(row, col, 1, 0, player) ||  // Vertical
+                   checkDirection(row, col, 1, 1, player) ||  // Diagonal \
+                   checkDirection(row, col, 1, -1, player);   // Diagonal /
+        }
+
+        function checkDirection(row, col, dRow, dCol, player) {
+            let count = 1;
+            
+            // Check forward
+            let r = row + dRow;
+            let c = col + dCol;
+            while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) {
+                count++;
+                r += dRow;
+                c += dCol;
+            }
+            
+            // Check backward
+            r = row - dRow;
+            c = col - dCol;
+            while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) {
+                count++;
+                r -= dRow;
+                c -= dCol;
+            }
+            
+            return count >= 4;
+        }
+
+        function highlightWinningDiscs() {
+            const player = currentPlayerIndex;
+            
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    if (board[r][c] === player && isPartOfWinningSequence(r, c, player)) {
+                        const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                        const disc = cell.querySelector('.disc');
+                        if (disc) {
+                            disc.classList.add('winning-disc');
+                            disc.style.color = players[player].color;
+                        }
+                    }
+                }
+            }
+        }
+
+        function isPartOfWinningSequence(row, col, player) {
+            const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+            
+            for (let [dRow, dCol] of directions) {
+                let count = 1;
+                
+                let r = row + dRow;
+                let c = col + dCol;
+                while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) {
+                    count++;
+                    r += dRow;
+                    c += dCol;
+                }
+                
+                r = row - dRow;
+                c = col - dCol;
+                while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) {
+                    count++;
+                    r -= dRow;
+                    c -= dCol;
+                }
+                
+                if (count >= 4) return true;
+            }
+            
+            return false;
+        }
+
+        function isBoardFull() {
+            return board.every(row => row.every(cell => cell !== null));
+        }
+
+        function showWinner() {
+            document.getElementById('gameOver').classList.remove('hidden');
+            document.getElementById('winnerName').textContent = players[currentPlayerIndex].name + ' WINS!';
+            document.getElementById('winnerName').style.color = players[currentPlayerIndex].color;
+        }
+
+        function showDraw() {
+            document.getElementById('gameOver').classList.remove('hidden');
+            document.getElementById('winnerName').textContent = "IT'S A DRAW!";
+            document.getElementById('winnerName').style.color = '#ccc';
+        }
+
+        function resetGame() {
+            document.getElementById('setup').style.display = 'block';
+            document.getElementById('gameBoard').style.display = 'none';
+            document.getElementById('gameOver').classList.add('hidden');
+            currentPlayerIndex = 0;
+            gameActive = false;
+        }
+
+        // Initialize on load
+        initPlayerSetup();
+    </script>
+</body>
+</html>
