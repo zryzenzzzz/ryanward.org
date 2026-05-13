@@ -3,92 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect 4 - Multiplayer</title>
+    <title>Game Hub - Chess & Connect 4</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #1a1a1a;
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #ccc;
+        
+        body { 
+            background: #2b2b2b; 
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column;
+            color: #ccc; 
         }
-        .container {
-            background: #2b2b2b;
-            border-radius: 8px;
-            padding: 35px 40px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-            max-width: 1200px;
+        
+        .tab-container {
             width: 100%;
-            border: 1px solid #444;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
-        h1 { text-align: center; color: #e0e0e0; margin-bottom: 30px; font-size: 2.2em; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid #555; padding-bottom: 15px; }
+       
+        .tab-header {
+            display: flex;
+            background: #222;
+            border-bottom: 2px solid #444;
+            flex-shrink: 0;
+        }
+       
+        .tab-btn {
+            flex: 1;
+            padding: 18px 30px;
+            background: #222;
+            color: #888;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border-right: 1px solid #444;
+        }
+       
+        .tab-btn:last-child {
+            border-right: none;
+        }
+       
+        .tab-btn:hover {
+            background: #2b2b2b;
+            color: #aaa;
+        }
+       
+        .tab-btn.active {
+            background: #2b2b2b;
+            color: #e0e0e0;
+            border-bottom: 3px solid #5a5a5a;
+        }
+       
+        .tab-content {
+            display: none;
+            padding: 25px 30px;
+            flex: 1;
+        }
+       
+        .tab-content.active {
+            display: block;
+        }
 
-        .setup { text-align: center; }
-        .player-count { margin-bottom: 20px; }
-        .player-count label { font-size: 1.1em; color: #aaa; margin-right: 10px; font-weight: 500; }
+        .redbull-image {
+            display: block;
+            margin: 20px auto;
+            max-width: 90%;
+            width: 450px;
+        }
+
+        /* CONNECT 4 STYLES */
+        .connect4-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+       
+        .connect4-container h1 {
+            text-align: center;
+            color: #e0e0e0;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #555;
+            padding-bottom: 10px;
+            width: 100%;
+        }
+        .setup { text-align: center; width: 100%; }
+        .player-count { margin-bottom: 15px; }
+        .player-count label { font-size: 1em; color: #aaa; margin-right: 10px; font-weight: 500; }
         .player-count button {
-            background: #3a3a3a; color: #ccc; border: 1px solid #555; padding: 9px 18px; margin: 4px;
-            border-radius: 4px; cursor: pointer; font-size: 0.95em; transition: all 0.2s;
+            background: #3a3a3a; color: #ccc; border: 1px solid #555; padding: 7px 14px; margin: 3px;
+            border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: all 0.2s;
         }
         .player-count button:hover { background: #4a4a4a; border-color: #888; }
         .player-count button.active { background: #5a5a5a; border-color: #aaa; color: #fff; }
-
-        .options { margin: 20px 0; }
-        #blindMode { margin-right: 8px; transform: scale(1.2); }
-
+        .options { margin: 15px 0; }
+        #blindMode { margin-right: 8px; transform: scale(1.1); }
         .player-setup {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+            max-width: 100%;
         }
         .player-config {
-            background: #222; padding: 18px; border-radius: 6px; border: 1px solid #3f3f3f;
+            background: #222; padding: 12px; border-radius: 6px; border: 1px solid #3f3f3f;
         }
-        .player-config label { display: block; margin-bottom: 8px; color: #bbb; font-weight: 600; font-size: 0.95em; }
+        .player-config label { display: block; margin-bottom: 6px; color: #bbb; font-weight: 600; font-size: 0.85em; }
         .player-config input[type="text"] {
-            width: 100%; padding: 8px 10px; background: #1a1a1a; border: 1px solid #444;
-            border-radius: 4px; color: #ddd; font-size: 0.95em;
+            width: 100%; padding: 6px 8px; background: #1a1a1a; border: 1px solid #444;
+            border-radius: 4px; color: #ddd; font-size: 0.85em;
         }
         .color-preview {
-            width: 36px; height: 36px; border-radius: 50%; margin: 10px auto; border: 2px solid #555;
+            width: 30px; height: 30px; border-radius: 50%; margin: 8px auto; border: 2px solid #555;
         }
         .player-config input[type="color"] {
-            width: 100%; height: 30px; padding: 2px; background: #1a1a1a; border: 1px solid #444;
+            width: 100%; height: 26px; padding: 2px; background: #1a1a1a; border: 1px solid #444;
             border-radius: 4px; cursor: pointer;
         }
-
         .start-btn {
-            background: #555; color: #eee; border: 1px solid #777; padding: 14px 45px;
-            border-radius: 6px; font-size: 1.1em; cursor: pointer; font-weight: 600;
+            background: #555; color: #eee; border: 1px solid #777; padding: 12px 35px;
+            border-radius: 6px; font-size: 1em; cursor: pointer; font-weight: 600;
             letter-spacing: 1px; text-transform: uppercase;
         }
         .start-btn:hover { background: #6a6a6a; border-color: #999; }
-
-        .game-board { display: none; flex-direction: column; align-items: center; }
+        .game-board { display: none; flex-direction: column; align-items: center; width: 100%; }
         .current-player {
-            font-size: 1.3em; margin-bottom: 20px; padding: 12px 25px; background: #222;
-            border-radius: 6px; display: flex; align-items: center; gap: 12px;
+            font-size: 1.1em; margin-bottom: 15px; padding: 10px 20px; background: #222;
+            border-radius: 6px; display: flex; align-items: center; gap: 10px;
             border: 1px solid #3f3f3f; color: #ddd;
         }
-        .current-player-disc { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #666; }
-
-        .board-container { perspective: 800px; margin-bottom: 20px; }
+        .current-player-disc { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #666; }
+        .board-container { perspective: 800px; margin-bottom: 15px; }
         .board {
-            background: #3a3a3a; border-radius: 10px; padding: 18px; display: inline-block;
+            background: #3a3a3a; border-radius: 10px; padding: 12px; display: inline-block;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.6); border: 1px solid #4f4f4f;
         }
         .grid {
             display: grid;
-            gap: 8px;
+            gap: 6px;
             position: relative;
         }
         .cell {
-            width: 58px; height: 58px; background: #1a1a1a; border-radius: 50%;
+            width: 45px; height: 45px; background: #1a1a1a; border-radius: 50%;
             position: relative; cursor: pointer; transition: background 0.2s;
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.5); border: 1px solid #2f2f2f;
         }
@@ -108,73 +177,191 @@
             from { transform: translateY(var(--drop-distance)); }
             to { transform: translateY(0); }
         }
-
         .game-over {
-            text-align: center; margin-top: 18px; font-size: 1.8em; color: #e0e0e0;
-            font-weight: 600; background: #222; padding: 15px 30px; border-radius: 6px;
+            text-align: center; margin-top: 12px; font-size: 1.5em; color: #e0e0e0;
+            font-weight: 600; background: #222; padding: 12px 25px; border-radius: 6px;
             border: 1px solid #3f3f3f;
         }
         .reset-btn {
-            background: #4a4a4a; color: #ddd; border: 1px solid #666; padding: 14px 40px;
-            border-radius: 6px; font-size: 1.1em; cursor: pointer; margin-top: 20px;
+            background: #4a4a4a; color: #ddd; border: 1px solid #666; padding: 12px 35px;
+            border-radius: 6px; font-size: 1em; cursor: pointer; margin-top: 15px;
             font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
         }
         .reset-btn:hover { background: #5a5a5a; border-color: #888; }
-
+        
+        /* CHESS STYLES */
+        .chess-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 65px);
+            grid-template-rows: repeat(8, 65px);
+            border: 5px solid #333;
+            position: relative;
+            background: #222;
+        }
+        .sq {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .sq.light { background-color: #d2b48c; }
+        .sq.dark { background-color: #8b4513; }
+        .piece {
+            width: 58px; height: 58px;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            touch-action: none; position: absolute; z-index: 10; cursor: grab;
+            transition: filter 0.2s ease;
+        }
+        .piece.in-check {
+            filter: drop-shadow(0 0 12px #ff0000) drop-shadow(0 0 22px #ff4444) drop-shadow(0 0 10px #ff8888);
+        }
+        .hint {
+            width: 18px; height: 18px; background: rgba(0, 255, 100, 0.6);
+            border-radius: 50%; pointer-events: none; z-index: 5;
+        }
+        .hint.capture {
+            width: 52px; height: 52px; border: 5px solid rgba(255, 60, 60, 0.7);
+            background: transparent; border-radius: 50%;
+        }
+        .info-panel { min-width: 240px; }
+        .status { font-size: 1.6em; margin-bottom: 15px; color: #fff; }
+        .btn {
+            background: #4a4a4a; color: #ddd; border: 1px solid #666;
+            padding: 10px 18px; cursor: pointer; border-radius: 4px;
+            font-weight: bold; margin: 5px 0; width: 100%;
+        }
+        .btn:hover { background: #5a5a5a; border-color: #888; }
+        #notation {
+            margin-top: 15px; height: 280px; overflow-y: auto;
+            background: #111; padding: 12px; font-family: monospace;
+            white-space: pre-wrap; border-radius: 4px;
+        }
         .hidden { display: none !important; }
-        @media (max-width: 600px) {
-            .container { padding: 20px; }
-            .cell { width: 40px; height: 40px; }
-            .board { padding: 10px; }
-            .grid { gap: 5px; }
-            .player-setup { grid-template-columns: 1fr; }
+       
+        @media (max-width: 768px) {
+            .tab-btn { padding: 12px 15px; font-size: 1em; }
+            .tab-content { padding: 15px 20px; }
+            .connect4-container h1 { font-size: 1.4em; margin-bottom: 15px; }
+            .cell { width: 35px; height: 35px; }
+            .board { padding: 8px; }
+            .grid { gap: 4px; }
+            .player-setup { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .player-config { padding: 10px; }
+            .current-player { font-size: 1em; padding: 8px 15px; }
+            .game-over { font-size: 1.2em; padding: 10px 20px; }
+            .redbull-image { width: 350px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>CONNECT 4</h1>
-       
-        <div class="setup" id="setup">
-            <div class="player-count">
-                <label>Players:</label>
-                <button class="player-btn active" data-players="2">2</button>
-                <button class="player-btn" data-players="3">3</button>
-                <button class="player-btn" data-players="4">4</button>
-                <button class="player-btn" data-players="5">5</button>
-                <button class="player-btn" data-players="6">6</button>
-                <button class="player-btn" data-players="7">7</button>
-                <button class="player-btn" data-players="8">8</button>
-            </div>
-
-            <div class="options">
-                <label><input type="checkbox" id="blindMode"> Blind Mode (all discs white)</label>
-            </div>
-
-            <div class="player-setup" id="playerSetup"></div>
-            <button class="start-btn" onclick="startGame()">START GAME</button>
+    <div class="tab-container">
+        <div class="tab-header">
+            <button class="tab-btn active" onclick="switchTab(event, 'connect4')">Connect 4</button>
+            <button class="tab-btn" onclick="switchTab(event, 'chess')">Chess</button>
         </div>
 
-        <div class="game-board" id="gameBoard">
-            <div class="current-player" id="currentPlayer">
-                <span>TURN:</span>
-                <div class="current-player-disc" id="currentPlayerDisc"></div>
-                <span id="currentPlayerName"></span>
-            </div>
-            <div class="board-container">
-                <div class="board">
-                    <div class="grid" id="grid"></div>
+        <a href="https://www.redbull.com/us-en/energydrink" target="_blank">
+            <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/marlbullreds.png?raw=true" 
+                 alt="Red Bull" 
+                 class="redbull-image">
+        </a>
+
+        <!-- CONNECT 4 TAB -->
+        <div id="connect4" class="tab-content active">
+            <div class="connect4-container">
+                <h1>CONNECT 4</h1>
+                
+                <div class="setup" id="setup">
+                    <div class="player-count">
+                        <label>Players:</label>
+                        <button class="player-btn active" data-players="2">2</button>
+                        <button class="player-btn" data-players="3">3</button>
+                        <button class="player-btn" data-players="4">4</button>
+                        <button class="player-btn" data-players="5">5</button>
+                        <button class="player-btn" data-players="6">6</button>
+                        <button class="player-btn" data-players="7">7</button>
+                        <button class="player-btn" data-players="8">8</button>
+                    </div>
+                    <div class="options">
+                        <label><input type="checkbox" id="blindMode"> Blind Mode (all discs white)</label>
+                    </div>
+                    <div class="player-setup" id="playerSetup"></div>
+                    <button class="start-btn" onclick="startGame()">START GAME</button>
+                </div>
+                <div class="game-board" id="gameBoard">
+                    <div class="current-player" id="currentPlayer">
+                        <span>TURN:</span>
+                        <div class="current-player-disc" id="currentPlayerDisc"></div>
+                        <span id="currentPlayerName"></span>
+                    </div>
+                    <div class="board-container">
+                        <div class="board">
+                            <div class="grid" id="grid"></div>
+                        </div>
+                    </div>
+                    <div class="game-over hidden" id="gameOver">
+                        <div>GAME OVER</div>
+                        <div class="winner-name" id="winnerName"></div>
+                    </div>
+                    <button class="reset-btn" onclick="resetConnect4()">NEW GAME</button>
                 </div>
             </div>
-            <div class="game-over hidden" id="gameOver">
-                <div>GAME OVER</div>
-                <div class="winner-name" id="winnerName"></div>
+        </div>
+
+        <!-- CHESS TAB -->
+        <div id="chess" class="tab-content">
+            <div class="chess-container">
+                <div class="chess-board" id="chessBoard"></div>
+               
+                <div class="info-panel">
+                    <div class="status" id="status">White's Turn</div>
+                    <button class="btn" onclick="resetChess()">New Game</button>
+                    <button class="btn" onclick="flipBoard()">Flip Board</button>
+                    <div id="notation">Moves:</div>
+                </div>
             </div>
-            <button class="reset-btn" onclick="resetGame()">NEW GAME</button>
         </div>
     </div>
 
     <script>
+        // PRELOAD ALL CHESS PIECES IMMEDIATELY
+        const allPieceUrls = [
+            'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/chessguy.png?raw=true',
+            'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
+        ];
+        
+        allPieceUrls.forEach(url => {
+            const img = new Image();
+            img.src = url;
+        });
+
+        function switchTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // ===== CONNECT 4 CODE =====
         let playerCount = 2;
         let players = [];
         let currentPlayerIndex = 0;
@@ -183,7 +370,6 @@
         let cols = 7;
         let gameActive = false;
         let isBlindMode = false;
-
         const defaultColors = ['#e74c3c', '#3498db', '#f39c12', '#2ecc71', '#9b59b6', '#e84393', '#00cec9', '#fdcb6e'];
         const defaultNames = ['Red', 'Blue', 'Orange', 'Green', 'Purple', 'Pink', 'Cyan', 'Yellow'];
 
@@ -191,12 +377,10 @@
             const playerSetup = document.getElementById('playerSetup');
             playerSetup.innerHTML = '';
             isBlindMode = document.getElementById('blindMode').checked;
-
             for (let i = 0; i < playerCount; i++) {
                 const div = document.createElement('div');
                 div.className = 'player-config';
                 const color = isBlindMode ? '#ffffff' : defaultColors[i];
-                
                 div.innerHTML = `
                     <label>Player ${i + 1}</label>
                     <input type="text" id="playerName${i}" placeholder="Enter name" value="${defaultNames[i]}">
@@ -214,35 +398,29 @@
             document.getElementById(`preview${index}`).style.background = color;
         }
 
-        // Player count buttons
         document.querySelectorAll('.player-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 playerCount = parseInt(this.dataset.players);
-                
-                // Scale board with more players
                 rows = 5 + playerCount;
                 cols = 6 + playerCount;
-                
+                initBoard();
                 initPlayerSetup();
             });
         });
 
-        // Blind mode toggle
         document.getElementById('blindMode').addEventListener('change', initPlayerSetup);
 
         function startGame() {
             players = [];
             isBlindMode = document.getElementById('blindMode').checked;
-
             for (let i = 0; i < playerCount; i++) {
                 const name = document.getElementById(`playerName${i}`).value.trim() || defaultNames[i];
                 let color = document.getElementById(`playerColor${i}`).value;
                 if (isBlindMode) color = '#ffffff';
-                players.push({ name, color: isBlindMode ? defaultColors[i] : color }); // store real color internally
+                players.push({ name, color: isBlindMode ? defaultColors[i] : color });
             }
-           
             document.getElementById('setup').style.display = 'none';
             document.getElementById('gameBoard').style.display = 'flex';
             initBoard();
@@ -254,9 +432,11 @@
             board = Array(rows).fill().map(() => Array(cols).fill(null));
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-            grid.style.gridTemplateColumns = `repeat(${cols}, 58px)`;
-            grid.style.gridTemplateRows = `repeat(${rows}, 58px)`;
-           
+            const cellSize = window.innerWidth < 480 ? 28 : window.innerWidth < 768 ? 35 : 45;
+            const gap = window.innerWidth < 480 ? 4 : window.innerWidth < 768 ? 4 : 6;
+            grid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+            grid.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+            grid.style.gap = `${gap}px`;
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const cell = document.createElement('div');
@@ -277,14 +457,10 @@
 
         function handleCellClick(col) {
             if (!gameActive) return;
-           
             const row = getLowestEmptyRow(col);
             if (row === -1) return;
-
             board[row][col] = currentPlayerIndex;
             dropDisc(row, col);
-
-            // SWITCH TURN IMMEDIATELY
             if (!checkWin(row, col) && !isBoardFull()) {
                 currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
                 updateCurrentPlayer();
@@ -299,17 +475,15 @@
         }
 
         function dropDisc(row, col) {
-            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            const cell = document.querySelector(`#grid [data-row="${row}"][data-col="${col}"]`);
             const disc = document.createElement('div');
             disc.className = 'disc';
             disc.style.background = isBlindMode ? '#ffffff' : players[currentPlayerIndex].color;
-           
-            const dropDistance = (row + 1) * 66;
+            const cellSize = window.innerWidth < 480 ? 32 : window.innerWidth < 768 ? 39 : 51;
+            const dropDistance = (row + 1) * cellSize;
             disc.style.setProperty('--drop-distance', `-${dropDistance}px`);
             disc.style.animation = 'drop 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
-           
             cell.appendChild(disc);
-
             setTimeout(() => {
                 if (checkWin(row, col)) {
                     gameActive = false;
@@ -344,11 +518,11 @@
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     if (board[r][c] === player) {
-                        const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                        const cell = document.querySelector(`#grid [data-row="${r}"][data-col="${c}"]`);
                         const disc = cell.querySelector('.disc');
                         if (disc) {
                             disc.classList.add('winning-disc');
-                            disc.style.background = players[player].color; // reveal real color on win
+                            disc.style.background = players[player].color;
                         }
                     }
                 }
@@ -374,7 +548,7 @@
             winnerEl.style.color = '#ccc';
         }
 
-        function resetGame() {
+        function resetConnect4() {
             document.getElementById('setup').style.display = 'block';
             document.getElementById('gameBoard').style.display = 'none';
             document.getElementById('gameOver').classList.add('hidden');
@@ -382,8 +556,187 @@
             gameActive = false;
         }
 
-        // Initialize
         initPlayerSetup();
+
+        // ===== CHESS CODE =====
+        const chess = new Chess();
+        const boardEl = document.getElementById('chessBoard');
+        let isFlipped = false;
+        let selectedSq = null;
+
+        const pieceImgs = {
+            'wP': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+            'wR': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+            'wN': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+            'wB': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+            'wQ': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+            'wK': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/chessguy.png?raw=true',
+            'bP': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+            'bR': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+            'bN': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+            'bB': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+            'bQ': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+            'bK': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
+        };
+
+        function drawBoard() {
+            boardEl.innerHTML = '';
+            const layout = chess.board();
+            const inCheck = chess.in_check();
+            const turnColor = chess.turn();
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const boardR = isFlipped ? 7 - r : r;
+                    const boardC = isFlipped ? 7 - c : c;
+                    const squareName = String.fromCharCode(97 + boardC) + (8 - boardR);
+                    const sq = document.createElement('div');
+                    sq.className = `sq ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
+                    sq.dataset.square = squareName;
+                    const piece = layout[boardR][boardC];
+                    if (piece) {
+                        const pEl = document.createElement('div');
+                        pEl.className = 'piece';
+                        pEl.style.backgroundImage = `url(${pieceImgs[piece.color + piece.type.toUpperCase()]})`;
+                        pEl.dataset.square = squareName;
+                        pEl.dataset.color = piece.color;
+                        if (piece.type === 'k' && inCheck && piece.color === turnColor) {
+                            pEl.classList.add('in-check');
+                        }
+                        sq.appendChild(pEl);
+                    }
+                    boardEl.appendChild(sq);
+                }
+            }
+            updateUI();
+        }
+
+        function getSquareFromCoords(x, y) {
+            const boardRect = boardEl.getBoundingClientRect();
+            let col = Math.floor((x - boardRect.left) / 65);
+            let row = Math.floor((y - boardRect.top) / 65);
+            if (isFlipped) {
+                col = 7 - col;
+                row = 7 - row;
+            }
+            if (col < 0 || col > 7 || row < 0 || row > 7) return null;
+            return String.fromCharCode(97 + col) + (8 - row);
+        }
+
+        function showHints(sq) {
+            clearHints();
+            selectedSq = sq;
+            const moves = chess.moves({ square: sq, verbose: true });
+            moves.forEach(m => {
+                const targetSq = document.querySelector(`#chessBoard [data-square="${m.to}"]`);
+                if (targetSq) {
+                    const hint = document.createElement('div');
+                    hint.className = `hint ${m.captured ? 'capture' : ''}`;
+                    targetSq.appendChild(hint);
+                }
+            });
+        }
+
+        function clearHints() {
+            document.querySelectorAll('.hint').forEach(h => h.remove());
+            selectedSq = null;
+        }
+
+        function makeMove(from, to) {
+            const move = chess.move({ from, to, promotion: 'q' });
+            if (move) {
+                document.getElementById('notation').innerHTML += `<br>${move.san}`;
+                clearHints();
+                drawBoard();
+                return true;
+            }
+            return false;
+        }
+
+        function updateUI() {
+            if (chess.in_checkmate()) {
+                const winner = chess.turn() === 'w' ? "Black" : "White";
+                document.getElementById('status').innerText = `Checkmate! ${winner} Wins`;
+            } else if (chess.in_draw()) {
+                document.getElementById('status').innerText = "Draw";
+            } else {
+                const turn = chess.turn() === 'w' ? "White" : "Black";
+                let statusText = `${turn}'s Turn`;
+                if (chess.in_check()) statusText += " (Check!)";
+                document.getElementById('status').innerText = statusText;
+            }
+        }
+
+        function resetChess() {
+            chess.reset();
+            isFlipped = false;
+            clearHints();
+            document.getElementById('notation').innerHTML = "Moves:";
+            drawBoard();
+        }
+
+        function flipBoard() {
+            isFlipped = !isFlipped;
+            clearHints();
+            drawBoard();
+        }
+
+        boardEl.addEventListener('click', (e) => {
+            const sqElement = e.target.closest('.sq');
+            if (!sqElement) return;
+            const squareName = sqElement.dataset.square;
+            const pieceOnSquare = chess.get(squareName);
+            if (selectedSq) {
+                const moves = chess.moves({ square: selectedSq, verbose: true });
+                if (moves.some(m => m.to === squareName)) {
+                    makeMove(selectedSq, squareName);
+                } else if (pieceOnSquare && pieceOnSquare.color === chess.turn()) {
+                    showHints(squareName);
+                } else {
+                    clearHints();
+                }
+            } else if (pieceOnSquare && pieceOnSquare.color === chess.turn()) {
+                showHints(squareName);
+            }
+        });
+
+        interact('.piece').draggable({
+            listeners: {
+                start(event) {
+                    if (chess.turn() !== event.target.dataset.color) {
+                        event.interaction.stop();
+                        return;
+                    }
+                    event.target.style.zIndex = 1000;
+                    event.target.style.opacity = '0.75';
+                    showHints(event.target.dataset.square);
+                },
+                move(event) {
+                    let x = (parseFloat(event.target.getAttribute('data-x')) || 0) + event.dx;
+                    let y = (parseFloat(event.target.getAttribute('data-y')) || 0) + event.dy;
+                    event.target.style.transform = `translate(${x}px, ${y}px)`;
+                    event.target.setAttribute('data-x', x);
+                    event.target.setAttribute('data-y', y);
+                },
+                end(event) {
+                    const piece = event.target;
+                    piece.style.zIndex = 10;
+                    piece.style.opacity = '1';
+                    const rect = piece.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    const toSquare = getSquareFromCoords(centerX, centerY);
+                    if (toSquare && makeMove(piece.dataset.square, toSquare)) {
+                    } else {
+                        piece.style.transform = 'translate(0px, 0px)';
+                        piece.setAttribute('data-x', 0);
+                        piece.setAttribute('data-y', 0);
+                        clearHints();
+                    }
+                }
+            }
+        });
+
+        drawBoard();
     </script>
 </body>
 </html>
