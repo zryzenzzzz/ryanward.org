@@ -8,30 +8,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            background: #2b2b2b; 
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; 
-            min-height: 100vh; 
-            display: flex; 
+       
+        body {
+            background: #2b2b2b;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
-            color: #ccc; 
+            color: #ccc;
         }
-        
+       
         .tab-container {
             width: 100%;
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-       
+      
         .tab-header {
             display: flex;
             background: #222;
             border-bottom: 2px solid #444;
             flex-shrink: 0;
         }
-       
+      
         .tab-btn {
             flex: 1;
             padding: 18px 30px;
@@ -46,39 +46,37 @@
             transition: all 0.3s;
             border-right: 1px solid #444;
         }
-       
+      
         .tab-btn:last-child {
             border-right: none;
         }
-       
+      
         .tab-btn:hover {
             background: #2b2b2b;
             color: #aaa;
         }
-       
+      
         .tab-btn.active {
             background: #2b2b2b;
             color: #e0e0e0;
             border-bottom: 3px solid #5a5a5a;
         }
-       
+      
         .tab-content {
             display: none;
             padding: 25px 30px;
             flex: 1;
         }
-       
+      
         .tab-content.active {
             display: block;
         }
-
         .redbull-image {
             display: block;
             margin: 20px auto;
             max-width: 90%;
             width: 450px;
         }
-
         /* CONNECT 4 STYLES */
         .connect4-container {
             max-width: 1000px;
@@ -87,7 +85,7 @@
             flex-direction: column;
             align-items: center;
         }
-       
+      
         .connect4-container h1 {
             text-align: center;
             color: #e0e0e0;
@@ -188,7 +186,7 @@
             font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
         }
         .reset-btn:hover { background: #5a5a5a; border-color: #888; }
-        
+       
         /* CHESS STYLES */
         .chess-container {
             display: flex;
@@ -246,7 +244,7 @@
             white-space: pre-wrap; border-radius: 4px;
         }
         .hidden { display: none !important; }
-       
+      
         @media (max-width: 768px) {
             .tab-btn { padding: 12px 15px; font-size: 1em; }
             .tab-content { padding: 15px 20px; }
@@ -268,18 +266,16 @@
             <button class="tab-btn active" onclick="switchTab(event, 'connect4')">Connect 4</button>
             <button class="tab-btn" onclick="switchTab(event, 'chess')">Chess</button>
         </div>
-
         <a href="https://www.redbull.com/us-en/energydrink" target="_blank">
-            <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/marlbullreds.png?raw=true" 
-                 alt="Red Bull" 
+            <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/marlbullreds.png?raw=true"
+                 alt="Red Bull"
                  class="redbull-image">
         </a>
-
-        <!-- CONNECT 4 TAB -->
+        <!-- CONNECT 4 TAB - EXACTLY YOUR ORIGINAL -->
         <div id="connect4" class="tab-content active">
             <div class="connect4-container">
                 <h1>CONNECT 4</h1>
-                
+               
                 <div class="setup" id="setup">
                     <div class="player-count">
                         <label>Players:</label>
@@ -316,14 +312,22 @@
                 </div>
             </div>
         </div>
-
         <!-- CHESS TAB -->
         <div id="chess" class="tab-content">
             <div class="chess-container">
                 <div class="chess-board" id="chessBoard"></div>
-               
+              
                 <div class="info-panel">
                     <div class="status" id="status">White's Turn</div>
+                    
+                    <!-- === YOUR REQUESTED AI CONTROLS === -->
+                    <div style="margin: 12px 0; padding: 10px; background: #222; border: 1px solid #444; border-radius: 6px;">
+                        <label><input type="checkbox" id="playVsAI" onchange="toggleAI()"> Play vs AI (The AI is really dumb btw)</label><br><br>
+                        <button id="aiSideSwitch" class="btn" onclick="toggleAISide()" style="opacity:0.5; pointer-events:none;">
+                            You play as White (AI = Black)
+                        </button>
+                    </div>
+
                     <button class="btn" onclick="resetChess()">New Game</button>
                     <button class="btn" onclick="flipBoard()">Flip Board</button>
                     <div id="notation">Moves:</div>
@@ -348,20 +352,18 @@
             'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
             'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
         ];
-        
+       
         allPieceUrls.forEach(url => {
             const img = new Image();
             img.src = url;
         });
-
         function switchTab(evt, tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
-
-        // ===== CONNECT 4 CODE =====
+        // ===== CONNECT 4 CODE ===== (100% UNCHANGED)
         let playerCount = 2;
         let players = [];
         let currentPlayerIndex = 0;
@@ -372,7 +374,6 @@
         let isBlindMode = false;
         const defaultColors = ['#e74c3c', '#3498db', '#f39c12', '#2ecc71', '#9b59b6', '#e84393', '#00cec9', '#fdcb6e'];
         const defaultNames = ['Red', 'Blue', 'Orange', 'Green', 'Purple', 'Pink', 'Cyan', 'Yellow'];
-
         function initPlayerSetup() {
             const playerSetup = document.getElementById('playerSetup');
             playerSetup.innerHTML = '';
@@ -391,13 +392,11 @@
                 playerSetup.appendChild(div);
             }
         }
-
         function updateColorPreview(index) {
             if (isBlindMode) return;
             const color = document.getElementById(`playerColor${index}`).value;
             document.getElementById(`preview${index}`).style.background = color;
         }
-
         document.querySelectorAll('.player-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('active'));
@@ -409,9 +408,7 @@
                 initPlayerSetup();
             });
         });
-
         document.getElementById('blindMode').addEventListener('change', initPlayerSetup);
-
         function startGame() {
             players = [];
             isBlindMode = document.getElementById('blindMode').checked;
@@ -427,7 +424,6 @@
             gameActive = true;
             updateCurrentPlayer();
         }
-
         function initBoard() {
             board = Array(rows).fill().map(() => Array(cols).fill(null));
             const grid = document.getElementById('grid');
@@ -448,13 +444,11 @@
                 }
             }
         }
-
         function updateCurrentPlayer() {
             const player = players[currentPlayerIndex];
             document.getElementById('currentPlayerName').textContent = player.name;
             document.getElementById('currentPlayerDisc').style.background = isBlindMode ? '#ffffff' : player.color;
         }
-
         function handleCellClick(col) {
             if (!gameActive) return;
             const row = getLowestEmptyRow(col);
@@ -466,14 +460,12 @@
                 updateCurrentPlayer();
             }
         }
-
         function getLowestEmptyRow(col) {
             for (let r = rows - 1; r >= 0; r--) {
                 if (board[r][col] === null) return r;
             }
             return -1;
         }
-
         function dropDisc(row, col) {
             const cell = document.querySelector(`#grid [data-row="${row}"][data-col="${col}"]`);
             const disc = document.createElement('div');
@@ -495,7 +487,6 @@
                 }
             }, 500);
         }
-
         function checkWin(row, col) {
             const player = board[row][col];
             return checkDirection(row, col, 0, 1, player) ||
@@ -503,7 +494,6 @@
                    checkDirection(row, col, 1, 1, player) ||
                    checkDirection(row, col, 1, -1, player);
         }
-
         function checkDirection(row, col, dRow, dCol, player) {
             let count = 1;
             let r = row + dRow, c = col + dCol;
@@ -512,7 +502,6 @@
             while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) { count++; r -= dRow; c -= dCol; }
             return count >= 4;
         }
-
         function highlightWinningDiscs() {
             const player = currentPlayerIndex;
             for (let r = 0; r < rows; r++) {
@@ -528,11 +517,9 @@
                 }
             }
         }
-
         function isBoardFull() {
             return board.every(row => row.every(cell => cell !== null));
         }
-
         function showWinner() {
             const winner = players[currentPlayerIndex];
             document.getElementById('gameOver').classList.remove('hidden');
@@ -540,14 +527,12 @@
             winnerEl.textContent = `${winner.name} WINS!`;
             winnerEl.style.color = winner.color;
         }
-
         function showDraw() {
             document.getElementById('gameOver').classList.remove('hidden');
             const winnerEl = document.getElementById('winnerName');
             winnerEl.textContent = "IT'S A DRAW!";
             winnerEl.style.color = '#ccc';
         }
-
         function resetConnect4() {
             document.getElementById('setup').style.display = 'block';
             document.getElementById('gameBoard').style.display = 'none';
@@ -555,14 +540,15 @@
             currentPlayerIndex = 0;
             gameActive = false;
         }
-
         initPlayerSetup();
 
-        // ===== CHESS CODE =====
+        // ===== CHESS CODE WITH YOUR REQUESTED FEATURES =====
         const chess = new Chess();
         const boardEl = document.getElementById('chessBoard');
         let isFlipped = false;
         let selectedSq = null;
+        let playVsAI = false;
+        let playerIsWhite = true;
 
         const pieceImgs = {
             'wP': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
@@ -578,6 +564,72 @@
             'bQ': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
             'bK': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
         };
+
+        const pieceValue = {p:100, n:320, b:330, r:500, q:900, k:20000};
+
+        function toggleAI() {
+            playVsAI = document.getElementById('playVsAI').checked;
+            const btn = document.getElementById('aiSideSwitch');
+            if (playVsAI) {
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            } else {
+                btn.style.opacity = "0.5";
+                btn.style.pointerEvents = "none";
+            }
+            resetChess();
+        }
+
+        function toggleAISide() {
+            if (!playVsAI) return;
+            playerIsWhite = !playerIsWhite;
+            document.getElementById('aiSideSwitch').textContent = playerIsWhite ? "You play as White (AI = Black)" : "You play as Black (AI = White)";
+            resetChess();
+        }
+
+        function makeAIMove() {
+            if (!playVsAI || chess.game_over()) return;
+            const moves = chess.moves({verbose: true});
+            if (moves.length === 0) return;
+
+            let bestMove = moves[0];
+            let bestScore = -999999;
+
+            for (let m of moves) {
+                chess.move(m);
+                let score = 0;
+                const b = chess.board();
+                for (let row of b) for (let sq of row) {
+                    if (sq) score += (sq.color === 'w' ? pieceValue[sq.type] : -pieceValue[sq.type]);
+                }
+                if (m.captured) score += pieceValue[m.captured] * 3;
+                if (m.captured === 'q') score += 5000;
+                chess.undo();
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = m;
+                }
+            }
+
+            // Sliding animation
+            const piece = document.querySelector(`[data-square="${bestMove.from}"] .piece`);
+            if (piece) {
+                const toRect = document.querySelector(`[data-square="${bestMove.to}"]`).getBoundingClientRect();
+                const fromRect = piece.getBoundingClientRect();
+                const dx = toRect.left - fromRect.left;
+                const dy = toRect.top - fromRect.top;
+
+                piece.style.transition = 'transform 0.5s ease-out';
+                piece.style.transform = `translate(${dx}px, ${dy}px)`;
+            }
+
+            setTimeout(() => {
+                chess.move(bestMove);
+                document.getElementById('notation').innerHTML += `<br>${bestMove.san}`;
+                drawBoard();
+            }, 520);
+        }
 
         function drawBoard() {
             boardEl.innerHTML = '';
@@ -608,6 +660,10 @@
                 }
             }
             updateUI();
+
+            if (playVsAI && ((playerIsWhite && chess.turn() === 'b') || (!playerIsWhite && chess.turn() === 'w'))) {
+                setTimeout(makeAIMove, 350);
+            }
         }
 
         function getSquareFromCoords(x, y) {
@@ -621,7 +677,6 @@
             if (col < 0 || col > 7 || row < 0 || row > 7) return null;
             return String.fromCharCode(97 + col) + (8 - row);
         }
-
         function showHints(sq) {
             clearHints();
             selectedSq = sq;
@@ -635,12 +690,10 @@
                 }
             });
         }
-
         function clearHints() {
             document.querySelectorAll('.hint').forEach(h => h.remove());
             selectedSq = null;
         }
-
         function makeMove(from, to) {
             const move = chess.move({ from, to, promotion: 'q' });
             if (move) {
@@ -651,7 +704,6 @@
             }
             return false;
         }
-
         function updateUI() {
             if (chess.in_checkmate()) {
                 const winner = chess.turn() === 'w' ? "Black" : "White";
@@ -665,7 +717,6 @@
                 document.getElementById('status').innerText = statusText;
             }
         }
-
         function resetChess() {
             chess.reset();
             isFlipped = false;
@@ -673,13 +724,11 @@
             document.getElementById('notation').innerHTML = "Moves:";
             drawBoard();
         }
-
         function flipBoard() {
             isFlipped = !isFlipped;
             clearHints();
             drawBoard();
         }
-
         boardEl.addEventListener('click', (e) => {
             const sqElement = e.target.closest('.sq');
             if (!sqElement) return;
@@ -698,7 +747,6 @@
                 showHints(squareName);
             }
         });
-
         interact('.piece').draggable({
             listeners: {
                 start(event) {
@@ -735,7 +783,6 @@
                 }
             }
         });
-
         drawBoard();
     </script>
 </body>
