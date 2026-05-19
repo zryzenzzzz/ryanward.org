@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Hub - Chess & Connect 4</title>
+    <title>Games</title>
+    <link rel="icon" type="image/png" href="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <style>
@@ -193,6 +194,7 @@
             gap: 30px;
             justify-content: center;
             flex-wrap: wrap;
+            align-items: flex-start; /* Ensure items align to top */
         }
         .chess-board {
             display: grid;
@@ -201,6 +203,7 @@
             border: 5px solid #333;
             position: relative;
             background: #222;
+            height: calc(8 * 65px + 10px); /* Exact height including borders */
         }
         .sq {
             width: 65px;
@@ -218,6 +221,32 @@
             background-size: contain; background-repeat: no-repeat; background-position: center;
             touch-action: none; position: absolute; z-index: 10; cursor: grab;
             transition: filter 0.2s ease;
+        }
+        .piece.knight {
+            background-size: contain;
+            background-position: center bottom;
+            height: 85px;
+            width: 85px;
+            top: 0px; 
+            left: -10px;
+        }
+        .back-arrow {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            font-size: 40px;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s, transform 0.3s;
+            z-index: 100;
+            display: none;
+        }
+        .back-arrow:hover {
+            color: #fff;
+            transform: translateX(-5px);
+        }
+        #connect4.active ~ .back-arrow {
+            display: block;
         }
         .piece.in-check {
             filter: drop-shadow(0 0 12px #ff0000) drop-shadow(0 0 22px #ff4444) drop-shadow(0 0 10px #ff8888);
@@ -271,7 +300,7 @@
                  alt="Red Bull"
                  class="redbull-image">
         </a>
-        <!-- CONNECT 4 TAB - EXACTLY YOUR ORIGINAL -->
+        <!-- CONNECT 4 TAB -->
         <div id="connect4" class="tab-content active">
             <div class="connect4-container">
                 <h1>CONNECT 4</h1>
@@ -320,7 +349,6 @@
                 <div class="info-panel">
                     <div class="status" id="status">White's Turn</div>
                     
-                    <!-- === YOUR REQUESTED AI CONTROLS === -->
                     <div style="margin: 12px 0; padding: 10px; background: #222; border: 1px solid #444; border-radius: 6px;">
                         <label><input type="checkbox" id="playVsAI" onchange="toggleAI()"> Play vs AI (The AI is really dumb btw)</label><br><br>
                         <button id="aiSideSwitch" class="btn" onclick="toggleAISide()" style="opacity:0.5; pointer-events:none;">
@@ -334,23 +362,24 @@
                 </div>
             </div>
         </div>
+        <a href="https://Ryanward.org" class="back-arrow">&larr;</a>
     </div>
 
     <script>
         // PRELOAD ALL CHESS PIECES IMMEDIATELY
         const allPieceUrls = [
-            'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightPawn.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightRook.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/BlackNight.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightBishop.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightQueen.webp?raw=true',
             'https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/chessguy.png?raw=true',
-            'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkPawn.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkRook.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/WhiteNight.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkBishop.webp?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkQueen.png?raw=true',
+            'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkKing.webp?raw=true'
         ];
        
         allPieceUrls.forEach(url => {
@@ -363,7 +392,7 @@
             document.getElementById(tabName).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
-        // ===== CONNECT 4 CODE ===== (100% UNCHANGED)
+        // ===== CONNECT 4 CODE =====
         let playerCount = 2;
         let players = [];
         let currentPlayerIndex = 0;
@@ -542,7 +571,7 @@
         }
         initPlayerSetup();
 
-        // ===== CHESS CODE WITH YOUR REQUESTED FEATURES =====
+        // ===== CHESS CODE =====
         const chess = new Chess();
         const boardEl = document.getElementById('chessBoard');
         let isFlipped = false;
@@ -551,18 +580,18 @@
         let playerIsWhite = true;
 
         const pieceImgs = {
-            'wP': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
-            'wR': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
-            'wN': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
-            'wB': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
-            'wQ': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+            'wP': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightPawn.webp?raw=true',
+            'wR': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightRook.webp?raw=true',
+            'wN': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/BlackNight.webp?raw=true',
+            'wB': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightBishop.webp?raw=true',
+            'wQ': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightQueen.webp?raw=true',
             'wK': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Pics/chessguy.png?raw=true',
-            'bP': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
-            'bR': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
-            'bN': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
-            'bB': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
-            'bQ': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
-            'bK': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg'
+            'bP': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkPawn.webp?raw=true',
+            'bR': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkRook.webp?raw=true',
+            'bN': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/WhiteNight.webp?raw=true',
+            'bB': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkBishop.webp?raw=true',
+            'bQ': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkQueen.png?raw=true',
+            'bK': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/DarkKing.webp?raw=true'
         };
 
         const pieceValue = {p:100, n:320, b:330, r:500, q:900, k:20000};
@@ -648,6 +677,9 @@
                     if (piece) {
                         const pEl = document.createElement('div');
                         pEl.className = 'piece';
+                        if (piece.type === 'n') {
+                            pEl.classList.add('knight');
+                        }
                         pEl.style.backgroundImage = `url(${pieceImgs[piece.color + piece.type.toUpperCase()]})`;
                         pEl.dataset.square = squareName;
                         pEl.dataset.color = piece.color;
