@@ -1131,6 +1131,14 @@
                 <span>Resume</span>
             </div>
 
+            <!-- Games Icon - Opens in new tab to ryanward.org/games -->
+            <div class="desktop-icon" onclick="window.open('https://ryanward.org/games', '_blank')">
+                <div class="icon">
+                    <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true" alt="Games" style="width:48px;height:48px;object-fit:contain;border-radius:6px;">
+                </div>
+                <span>Games</span>
+            </div>
+
             <div class="desktop-icon" onclick="openWindow('files')">
                 <div class="icon">
                     <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1227,6 +1235,13 @@
                         <svg viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/><path d="M28 4v12h12L28 4z" fill="#A3D4F7"/></svg>
                     </div>
                     <span>Resume</span>
+                </div>
+                <!-- Games in Start Menu - Opens in new tab -->
+                <div class="pinned-app" onclick="window.open('https://ryanward.org/games', '_blank'); toggleStartMenu();">
+                    <div class="icon">
+                        <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true" alt="Games" style="width:32px;height:32px;object-fit:contain;border-radius:4px;">
+                    </div>
+                    <span>Games</span>
                 </div>
                 <div class="pinned-app" onclick="openWindow('files'); toggleStartMenu();">
                     <div class="icon">
@@ -1678,6 +1693,10 @@
             </div>
             <div class="taskbar-btn" id="taskbar-resume" onclick="focusWindow('resume')">
                 <svg width="20" height="20" viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/></svg>
+            </div>
+            <!-- Games Taskbar Button - Opens in new tab -->
+            <div class="taskbar-btn" id="taskbar-games" onclick="window.open('https://ryanward.org/games', '_blank')" title="Games">
+                <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true" alt="Games" style="width:20px;height:20px;object-fit:contain;border-radius:3px;">
             </div>
             <div class="taskbar-btn" id="taskbar-files" onclick="focusWindow('files')">
                 <svg width="20" height="20" viewBox="0 0 48 48"><path d="M6 12a2 2 0 012-2h10l4 4h18a2 2 0 012 2v24a2 2 0 01-2 2H8a2 2 0 01-2-2V12z" fill="#FFC107"/></svg>
