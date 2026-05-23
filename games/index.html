@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
        
@@ -100,6 +102,91 @@
             width: 100%;
         }
         .setup { text-align: center; width: 100%; }
+        .mode-selector {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .mode-btn {
+            background: #3a3a3a;
+            color: #ccc;
+            border: 1px solid #555;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .mode-btn:hover {
+            background: #4a4a4a;
+            border-color: #888;
+        }
+        .mode-btn.active {
+            background: #5a5a5a;
+            border-color: #aaa;
+            color: #fff;
+        }
+        .multiplayer-setup {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background: #222;
+            border-radius: 6px;
+            border: 1px solid #3f3f3f;
+        }
+        .multiplayer-setup.active {
+            display: block;
+        }
+        .multiplayer-setup h3 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        .multiplayer-input {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #ddd;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .invite-link-container {
+            display: none;
+            margin: 15px 0;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            border: 2px solid #4a4a4a;
+            text-align: center;
+        }
+        .invite-link-container.active {
+            display: block;
+        }
+        .invite-link {
+            word-break: break-all;
+            color: #4CAF50;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0a0a0a;
+            border-radius: 6px;
+            border: 2px solid #4CAF50;
+        }
+        .copy-btn {
+            background: #3a3a3a;
+            color: #ccc;
+            border: 1px solid #555;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .copy-btn:hover {
+            background: #4a4a4a;
+        }
         .player-count { margin-bottom: 15px; }
         .player-count label { font-size: 1em; color: #aaa; margin-right: 10px; font-weight: 500; }
         .player-count button {
@@ -189,13 +276,41 @@
         .reset-btn:hover { background: #5a5a5a; border-color: #888; }
        
         /* CHESS STYLES */
+        .chess-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .chess-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .chess-header h1 {
+            color: #e0e0e0;
+            font-size: 1.8em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #555;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
         .chess-container {
             display: flex;
             gap: 30px;
             justify-content: center;
-            flex-wrap: wrap;
-            align-items: flex-start; /* Ensure items align to top */
+            align-items: flex-start;
         }
+        
+        .chess-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
         .chess-board {
             display: grid;
             grid-template-columns: repeat(8, 65px);
@@ -203,8 +318,33 @@
             border: 5px solid #333;
             position: relative;
             background: #222;
-            height: calc(8 * 65px + 10px); /* Exact height including borders */
+            height: calc(8 * 65px + 10px);
+            margin-bottom: 20px;
         }
+        
+        .chess-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .chess-controls .btn {
+            background: #4a4a4a;
+            color: #ddd;
+            border: 1px solid #666;
+            padding: 10px 18px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .chess-controls .btn:hover {
+            background: #5a5a5a;
+            border-color: #888;
+        }
+        
         .sq {
             width: 65px;
             height: 65px;
@@ -229,6 +369,10 @@
             width: 85px;
             top: 0px; 
             left: -10px;
+        }
+        .piece.moving {
+            transition: transform 0.5s ease-out;
+            z-index: 1000;
         }
         .back-arrow {
             position: fixed;
@@ -259,20 +403,286 @@
             width: 52px; height: 52px; border: 5px solid rgba(255, 60, 60, 0.7);
             background: transparent; border-radius: 50%;
         }
-        .info-panel { min-width: 240px; }
-        .status { font-size: 1.6em; margin-bottom: 15px; color: #fff; }
+        
+        .chess-right {
+            min-width: 300px;
+            max-width: 300px;
+        }
+        
+        .status {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            background: #222;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #444;
+        }
+        
+        #aiControls {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        #aiControls .btn {
+            width: 100%;
+            background: #4a4a4a;
+            color: #ddd;
+            border: 1px solid #666;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        #aiControls .btn:hover {
+            background: #5a5a5a;
+            border-color: #888;
+        }
+        
+        .notation-container {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .notation-container h3 {
+            color: #e0e0e0;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #444;
+        }
+        
+        #notation {
+            height: 400px;
+            overflow-y: auto;
+            background: #111;
+            padding: 12px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border-radius: 4px;
+            color: #ccc;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        #notation::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #notation::-webkit-scrollbar-track {
+            background: #0a0a0a;
+            border-radius: 4px;
+        }
+        
+        #notation::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+        
+        #notation::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
         .btn {
             background: #4a4a4a; color: #ddd; border: 1px solid #666;
             padding: 10px 18px; cursor: pointer; border-radius: 4px;
             font-weight: bold; margin: 5px 0; width: 100%;
         }
         .btn:hover { background: #5a5a5a; border-color: #888; }
-        #notation {
-            margin-top: 15px; height: 280px; overflow-y: auto;
-            background: #111; padding: 12px; font-family: monospace;
-            white-space: pre-wrap; border-radius: 4px;
-        }
+        
         .hidden { display: none !important; }
+        
+        /* CHAT BOX STYLES */
+        .chat-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            height: 450px;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .chat-box.active {
+            display: flex;
+        }
+        .chat-header {
+            background: #2a2a2a;
+            padding: 12px;
+            border-bottom: 1px solid #444;
+            font-weight: 600;
+            color: #e0e0e0;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .chat-toggle {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+        .chat-toggle:hover {
+            background: #3a3a3a;
+            border-radius: 4px;
+        }
+        .chat-box.minimized .chat-toggle {
+            transform: rotate(180deg);
+        }
+        .chat-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        .chat-box.minimized .chat-content {
+            display: none;
+        }
+        .chat-box.minimized {
+            height: 50px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #0f0f0f;
+        }
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: #0a0a0a;
+            border-radius: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .chat-message {
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 75%;
+            word-wrap: break-word;
+            word-break: break-word;
+            font-size: 0.9em;
+            line-height: 1.4;
+            animation: messageSlide 0.2s ease-out;
+        }
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .chat-message.own {
+            background: #2563eb;
+            align-self: flex-end;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-message.other {
+            background: #374151;
+            align-self: flex-start;
+            color: #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-sender {
+            font-size: 0.7em;
+            opacity: 0.8;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+        .chat-text {
+            margin: 0;
+        }
+        .chat-input-container {
+            padding: 12px;
+            border-top: 1px solid #444;
+            background: #222;
+            flex-shrink: 0;
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 20px;
+            color: #ddd;
+            font-size: 0.9em;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input:focus {
+            border-color: #2563eb;
+        }
+        .chat-send-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            font-size: 0.85em;
+        }
+        .chat-send-btn:hover {
+            background: #1d4ed8;
+        }
+        .chat-send-btn:active {
+            transform: scale(0.95);
+        }
+      
+        @media (max-width: 1024px) {
+            .chess-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .chess-right {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            #notation {
+                height: 250px;
+            }
+        }
       
         @media (max-width: 768px) {
             .tab-btn { padding: 12px 15px; font-size: 1em; }
@@ -286,6 +696,34 @@
             .current-player { font-size: 1em; padding: 8px 15px; }
             .game-over { font-size: 1.2em; padding: 10px 20px; }
             .redbull-image { width: 350px; }
+            .chat-box { 
+                width: calc(100% - 20px); 
+                height: 350px; 
+                bottom: 10px; 
+                right: 10px; 
+                left: 10px;
+            }
+            
+            .chess-board {
+                grid-template-columns: repeat(8, 50px);
+                grid-template-rows: repeat(8, 50px);
+                height: calc(8 * 50px + 10px);
+            }
+            
+            .sq {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .piece {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .piece.knight {
+                width: 65px;
+                height: 65px;
+            }
         }
     </style>
 </head>
@@ -305,22 +743,57 @@
             <div class="connect4-container">
                 <h1>CONNECT 4</h1>
                
-                <div class="setup" id="setup">
-                    <div class="player-count">
-                        <label>Players:</label>
-                        <button class="player-btn active" data-players="2">2</button>
-                        <button class="player-btn" data-players="3">3</button>
-                        <button class="player-btn" data-players="4">4</button>
-                        <button class="player-btn" data-players="5">5</button>
-                        <button class="player-btn" data-players="6">6</button>
-                        <button class="player-btn" data-players="7">7</button>
-                        <button class="player-btn" data-players="8">8</button>
+                <div class="setup" id="c4setup">
+                    <div class="mode-selector">
+                        <button class="mode-btn active" onclick="selectC4Mode('local')">Local Game</button>
+                        <button class="mode-btn" onclick="selectC4Mode('online')">Online Multiplayer</button>
                     </div>
-                    <div class="options">
-                        <label><input type="checkbox" id="blindMode"> Blind Mode (all discs white)</label>
+
+                    <div class="multiplayer-setup" id="c4multiplayerSetup">
+                        <h3>Online Multiplayer</h3>
+                        
+                        <div id="c4firebaseStatus" style="margin-bottom: 15px; padding: 10px; background: #2a2a2a; border-radius: 4px; text-align: center; font-size: 0.9em;">
+                            <span style="color: #888;">Connecting to Firebase...</span>
+                        </div>
+                        
+                        <div id="c4createSection">
+                            <input type="text" id="c4playerName" class="multiplayer-input" placeholder="Enter your name" required>
+                            <button class="start-btn" onclick="createC4OnlineGame()">Create Game</button>
+                        </div>
+                        
+                        <div class="invite-link-container" id="c4inviteLinkContainer">
+                            <div style="color: #4CAF50; margin-bottom: 10px; font-weight: 600; font-size: 1.1em;">Your Game Code:</div>
+                            <div class="invite-link" id="c4inviteLink" style="font-size: 2.5em; letter-spacing: 4px; font-weight: bold;"></div>
+                            <button class="copy-btn" onclick="copyC4InviteLink()">Copy Code</button>
+                            <div style="margin-top: 15px; color: #f39c12; font-size: 1.1em;">Waiting for opponent to join...</div>
+                        </div>
+                        
+                        <div style="margin: 25px 0; color: #666; text-align: center; font-weight: bold;">OR</div>
+                        
+                        <div id="c4joinSection">
+                            <input type="text" id="c4joinPlayerName" class="multiplayer-input" placeholder="Enter your name" required>
+                            <input type="text" id="c4gameId" class="multiplayer-input" placeholder="Enter game code" style="text-transform: uppercase;" maxlength="6">
+                            <button class="start-btn" onclick="joinC4OnlineGame()">Join Game</button>
+                        </div>
                     </div>
-                    <div class="player-setup" id="playerSetup"></div>
-                    <button class="start-btn" onclick="startGame()">START GAME</button>
+
+                    <div id="c4localSetup">
+                        <div class="player-count">
+                            <label>Players:</label>
+                            <button class="player-btn active" data-players="2">2</button>
+                            <button class="player-btn" data-players="3">3</button>
+                            <button class="player-btn" data-players="4">4</button>
+                            <button class="player-btn" data-players="5">5</button>
+                            <button class="player-btn" data-players="6">6</button>
+                            <button class="player-btn" data-players="7">7</button>
+                            <button class="player-btn" data-players="8">8</button>
+                        </div>
+                        <div class="options">
+                            <label><input type="checkbox" id="blindMode"> Blind Mode (all discs white)</label>
+                        </div>
+                        <div class="player-setup" id="playerSetup"></div>
+                        <button class="start-btn" onclick="startGame()">START GAME</button>
+                    </div>
                 </div>
                 <div class="game-board" id="gameBoard">
                     <div class="current-player" id="currentPlayer">
@@ -343,30 +816,119 @@
         </div>
         <!-- CHESS TAB -->
         <div id="chess" class="tab-content">
-            <div class="chess-container">
-                <div class="chess-board" id="chessBoard"></div>
-              
-                <div class="info-panel">
-                    <div class="status" id="status">White's Turn</div>
+            <div class="chess-wrapper">
+                <div class="chess-header">
+                    <h1>CHESS</h1>
                     
-                    <div style="margin: 12px 0; padding: 10px; background: #222; border: 1px solid #444; border-radius: 6px;">
-                        <label><input type="checkbox" id="playVsAI" onchange="toggleAI()"> Play vs AI (The AI is really dumb btw)</label><br><br>
-                        <button id="aiSideSwitch" class="btn" onclick="toggleAISide()" style="opacity:0.5; pointer-events:none;">
-                            You play as White (AI = Black)
-                        </button>
+                    <div class="mode-selector">
+                        <button class="mode-btn active" onclick="selectChessMode('local')">Local Game</button>
+                        <button class="mode-btn" onclick="selectChessMode('ai')">vs AI</button>
+                        <button class="mode-btn" onclick="selectChessMode('online')">Online Multiplayer</button>
                     </div>
 
-                    <button class="btn" onclick="resetChess()">New Game</button>
-                    <button class="btn" onclick="flipBoard()">Flip Board</button>
-                    <div id="notation">Moves:</div>
+                    <div class="multiplayer-setup" id="chessMultiplayerSetup">
+                        <h3>Online Multiplayer</h3>
+                        
+                        <div id="chessFirebaseStatus" style="margin-bottom: 15px; padding: 10px; background: #2a2a2a; border-radius: 4px; text-align: center; font-size: 0.9em;">
+                            <span style="color: #888;">Connecting to Firebase...</span>
+                        </div>
+                        
+                        <div id="chessCreateSection">
+                            <input type="text" id="chessPlayerName" class="multiplayer-input" placeholder="Enter your name" required>
+                            <button class="start-btn" onclick="createChessOnlineGame()">Create Game</button>
+                        </div>
+                        
+                        <div class="invite-link-container" id="chessInviteLinkContainer">
+                            <div style="color: #4CAF50; margin-bottom: 10px; font-weight: 600; font-size: 1.1em;">Your Game Code:</div>
+                            <div class="invite-link" id="chessInviteLink" style="font-size: 2.5em; letter-spacing: 4px; font-weight: bold;"></div>
+                            <button class="copy-btn" onclick="copyChessInviteLink()">Copy Code</button>
+                            <div style="margin-top: 15px; color: #f39c12; font-size: 1.1em;">Waiting for opponent to join...</div>
+                        </div>
+                        
+                        <div style="margin: 25px 0; color: #666; text-align: center; font-weight: bold;">OR</div>
+                        
+                        <div id="chessJoinSection">
+                            <input type="text" id="chessJoinPlayerName" class="multiplayer-input" placeholder="Enter your name" required>
+                            <input type="text" id="chessGameId" class="multiplayer-input" placeholder="Enter game code" style="text-transform: uppercase;" maxlength="6">
+                            <button class="start-btn" onclick="joinChessOnlineGame()">Join Game</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chess-container" id="chessLocalSetup">
+                    <div class="chess-left">
+                        <div class="chess-board" id="chessBoard"></div>
+                        <div class="chess-controls">
+                            <button class="btn" onclick="resetChess()">New Game</button>
+                            <button class="btn" onclick="flipBoard()">Flip Board</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chess-right">
+                        <div class="status" id="status">White's Turn</div>
+                        
+                        <div id="aiControls">
+                            <button id="aiSideSwitch" class="btn" onclick="toggleAISide()">
+                                You play as White (AI = Black)
+                            </button>
+                        </div>
+                        
+                        <div class="notation-container">
+                            <h3>Move History</h3>
+                            <div id="notation">Game started...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <a href="https://Ryanward.org" class="back-arrow">&larr;</a>
+        
+        <!-- Chat Box -->
+        <div id="chatBox" class="chat-box">
+            <div class="chat-header">
+                <span id="chatTitle">Chat</span>
+                <button class="chat-toggle" onclick="toggleChat()">▼</button>
+            </div>
+            <div id="chatContent" class="chat-content">
+                <div id="chatMessages" class="chat-messages"></div>
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Type message..." maxlength="200">
+                    <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // PRELOAD ALL CHESS PIECES IMMEDIATELY
+        // Initialize Firebase
+        let database;
+        
+        const firebaseConfig = {
+            databaseURL: "https://games-5a163-default-rtdb.firebaseio.com/"
+        };
+        
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            database = firebase.database();
+            
+            // Test connection
+            const connectedRef = database.ref('.info/connected');
+            connectedRef.on('value', (snap) => {
+                const c4StatusEl = document.getElementById('c4firebaseStatus');
+                const chessStatusEl = document.getElementById('chessFirebaseStatus');
+                const status = snap.val() === true 
+                    ? '<span style="color: #4CAF50;">✓ Connected to Firebase</span>'
+                    : '<span style="color: #f44336;">✗ Disconnected from Firebase</span>';
+                if (c4StatusEl) c4StatusEl.innerHTML = status;
+                if (chessStatusEl) chessStatusEl.innerHTML = status;
+            });
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+        }
+
+        // PRELOAD ALL CHESS PIECES
         const allPieceUrls = [
             'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightPawn.webp?raw=true',
             'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightRook.webp?raw=true',
@@ -386,13 +948,21 @@
             const img = new Image();
             img.src = url;
         });
+
         function switchTab(evt, tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
+
         // ===== CONNECT 4 CODE =====
+        let c4GameMode = 'local';
+        let c4OnlineGameId = null;
+        let c4IsHost = false;
+        let c4MyPlayerIndex = 0;
+        let c4GameRef = null;
+        
         let playerCount = 2;
         let players = [];
         let currentPlayerIndex = 0;
@@ -403,6 +973,198 @@
         let isBlindMode = false;
         const defaultColors = ['#e74c3c', '#3498db', '#f39c12', '#2ecc71', '#9b59b6', '#e84393', '#00cec9', '#fdcb6e'];
         const defaultNames = ['Red', 'Blue', 'Orange', 'Green', 'Purple', 'Pink', 'Cyan', 'Yellow'];
+
+        function selectC4Mode(mode) {
+            c4GameMode = mode;
+            document.querySelectorAll('#connect4 .mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (mode === 'online') {
+                document.getElementById('c4multiplayerSetup').classList.add('active');
+                document.getElementById('c4localSetup').style.display = 'none';
+            } else {
+                document.getElementById('c4multiplayerSetup').classList.remove('active');
+                document.getElementById('c4localSetup').style.display = 'block';
+            }
+        }
+
+        function generateGameId() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function createC4OnlineGame() {
+            const playerName = document.getElementById('c4playerName').value.trim();
+            
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            c4OnlineGameId = generateGameId();
+            c4IsHost = true;
+            c4MyPlayerIndex = 0;
+            
+            c4GameRef = database.ref('c4games/' + c4OnlineGameId);
+            
+            const gameData = {
+                host: playerName,
+                guest: null,
+                board: Array(6).fill().map(() => Array(7).fill(null)),
+                currentPlayer: 0,
+                gameActive: false,
+                playerCount: 1,
+                winner: null,
+                lastMove: null
+            };
+            
+            c4GameRef.set(gameData).then(() => {
+                document.getElementById('c4inviteLink').textContent = c4OnlineGameId;
+                document.getElementById('c4inviteLinkContainer').classList.add('active');
+                document.getElementById('c4createSection').style.display = 'none';
+                document.getElementById('c4joinSection').style.display = 'none';
+                
+                c4GameRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (!data) return;
+                    
+                    if (data.playerCount === 2 && !gameActive) {
+                        players = [
+                            { name: data.host, color: '#e74c3c' },
+                            { name: data.guest, color: '#3498db' }
+                        ];
+                        rows = 6;
+                        cols = 7;
+                        myName = data.host;
+                        document.getElementById('c4setup').style.display = 'none';
+                        document.getElementById('gameBoard').style.display = 'flex';
+                        initBoard();
+                        gameActive = true;
+                        currentPlayerIndex = 0;
+                        updateCurrentPlayer();
+                        setupChat('c4');
+                    }
+                    
+                    if (data && gameActive) {
+                        syncC4GameState(data);
+                    }
+                });
+            });
+        }
+
+        function joinC4OnlineGame() {
+            const gameId = document.getElementById('c4gameId').value.trim().toUpperCase();
+            const playerName = document.getElementById('c4joinPlayerName').value.trim();
+            
+            if (!playerName || !gameId) {
+                alert('Please enter your name and game code');
+                return;
+            }
+            
+            c4OnlineGameId = gameId;
+            c4IsHost = false;
+            c4MyPlayerIndex = 1;
+            
+            c4GameRef = database.ref('c4games/' + c4OnlineGameId);
+            
+            c4GameRef.once('value').then((snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data) {
+                    alert('Game not found');
+                    return;
+                }
+                
+                if (data.playerCount >= 2) {
+                    alert('This game already has 2 players');
+                    return;
+                }
+                
+                return c4GameRef.update({
+                    guest: playerName,
+                    playerCount: 2,
+                    gameActive: true
+                });
+            }).then(() => {
+                c4GameRef.once('value').then((snapshot) => {
+                    const data = snapshot.val();
+                    
+                    players = [
+                        { name: data.host, color: '#e74c3c' },
+                        { name: data.guest, color: '#3498db' }
+                    ];
+                    rows = 6;
+                    cols = 7;
+                    myName = playerName;
+                    
+                    document.getElementById('c4setup').style.display = 'none';
+                    document.getElementById('gameBoard').style.display = 'flex';
+                    initBoard();
+                    gameActive = true;
+                    currentPlayerIndex = 0;
+                    updateCurrentPlayer();
+                    setupChat('c4');
+                    
+                    c4GameRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data && gameActive) {
+                            syncC4GameState(data);
+                        }
+                    });
+                });
+            });
+        }
+
+        let c4LastMove = null;
+        
+        function syncC4GameState(data) {
+            if (!data || !gameActive) return;
+            
+            board = data.board;
+            currentPlayerIndex = data.currentPlayer;
+            
+            if (data.lastMove && JSON.stringify(data.lastMove) !== JSON.stringify(c4LastMove)) {
+                c4LastMove = data.lastMove;
+                
+                if (data.lastMove.player !== c4MyPlayerIndex) {
+                    const { row, col, player } = data.lastMove;
+                    const cell = document.querySelector(`#grid [data-row="${row}"][data-col="${col}"]`);
+                    if (cell && !cell.querySelector('.disc')) {
+                        const disc = document.createElement('div');
+                        disc.className = 'disc';
+                        disc.style.background = players[player].color;
+                        const cellSize = 45;
+                        const dropDistance = (row + 1) * cellSize;
+                        disc.style.setProperty('--drop-distance', `-${dropDistance}px`);
+                        disc.style.animation = 'drop 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                        cell.appendChild(disc);
+                    }
+                }
+            }
+            
+            updateCurrentPlayer();
+            
+            if (data.winner !== null && data.winner !== undefined) {
+                gameActive = false;
+                if (data.winner === -1) {
+                    showDraw();
+                } else {
+                    currentPlayerIndex = data.winner;
+                    highlightWinningDiscs();
+                    showWinner();
+                }
+            }
+        }
+
+        function copyC4InviteLink() {
+            const code = document.getElementById('c4inviteLink').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+
         function initPlayerSetup() {
             const playerSetup = document.getElementById('playerSetup');
             playerSetup.innerHTML = '';
@@ -421,11 +1183,13 @@
                 playerSetup.appendChild(div);
             }
         }
+        
         function updateColorPreview(index) {
             if (isBlindMode) return;
             const color = document.getElementById(`playerColor${index}`).value;
             document.getElementById(`preview${index}`).style.background = color;
         }
+        
         document.querySelectorAll('.player-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.player-btn').forEach(b => b.classList.remove('active'));
@@ -437,7 +1201,9 @@
                 initPlayerSetup();
             });
         });
+        
         document.getElementById('blindMode').addEventListener('change', initPlayerSetup);
+        
         function startGame() {
             players = [];
             isBlindMode = document.getElementById('blindMode').checked;
@@ -447,18 +1213,19 @@
                 if (isBlindMode) color = '#ffffff';
                 players.push({ name, color: isBlindMode ? defaultColors[i] : color });
             }
-            document.getElementById('setup').style.display = 'none';
+            document.getElementById('c4setup').style.display = 'none';
             document.getElementById('gameBoard').style.display = 'flex';
             initBoard();
             gameActive = true;
             updateCurrentPlayer();
         }
+        
         function initBoard() {
             board = Array(rows).fill().map(() => Array(cols).fill(null));
             const grid = document.getElementById('grid');
             grid.innerHTML = '';
-            const cellSize = window.innerWidth < 480 ? 28 : window.innerWidth < 768 ? 35 : 45;
-            const gap = window.innerWidth < 480 ? 4 : window.innerWidth < 768 ? 4 : 6;
+            const cellSize = 45;
+            const gap = 6;
             grid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
             grid.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
             grid.style.gap = `${gap}px`;
@@ -473,38 +1240,74 @@
                 }
             }
         }
+        
         function updateCurrentPlayer() {
             const player = players[currentPlayerIndex];
             document.getElementById('currentPlayerName').textContent = player.name;
             document.getElementById('currentPlayerDisc').style.background = isBlindMode ? '#ffffff' : player.color;
         }
+        
         function handleCellClick(col) {
             if (!gameActive) return;
+            
+            if (c4GameMode === 'online' && currentPlayerIndex !== c4MyPlayerIndex) {
+                return;
+            }
+            
             const row = getLowestEmptyRow(col);
             if (row === -1) return;
+            
             board[row][col] = currentPlayerIndex;
-            dropDisc(row, col);
-            if (!checkWin(row, col) && !isBoardFull()) {
-                currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
-                updateCurrentPlayer();
+            
+            const isWin = checkWin(row, col);
+            const isDraw = isBoardFull();
+            
+            if (c4GameMode === 'online') {
+                dropDisc(row, col);
+                
+                const nextPlayer = (currentPlayerIndex + 1) % 2;
+                c4LastMove = { row, col, player: currentPlayerIndex };
+                
+                const updateData = {
+                    board: board,
+                    currentPlayer: nextPlayer,
+                    lastMove: c4LastMove
+                };
+                
+                if (isWin) {
+                    updateData.winner = currentPlayerIndex;
+                } else if (isDraw) {
+                    updateData.winner = -1;
+                }
+                
+                c4GameRef.update(updateData);
+            } else {
+                dropDisc(row, col);
+                if (!isWin && !isDraw) {
+                    currentPlayerIndex = (currentPlayerIndex + 1) % playerCount;
+                    updateCurrentPlayer();
+                }
             }
         }
+        
         function getLowestEmptyRow(col) {
             for (let r = rows - 1; r >= 0; r--) {
                 if (board[r][col] === null) return r;
             }
             return -1;
         }
+        
         function dropDisc(row, col) {
             const cell = document.querySelector(`#grid [data-row="${row}"][data-col="${col}"]`);
             const disc = document.createElement('div');
             disc.className = 'disc';
             disc.style.background = isBlindMode ? '#ffffff' : players[currentPlayerIndex].color;
-            const cellSize = window.innerWidth < 480 ? 32 : window.innerWidth < 768 ? 39 : 51;
+            const cellSize = 51;
             const dropDistance = (row + 1) * cellSize;
             disc.style.setProperty('--drop-distance', `-${dropDistance}px`);
             disc.style.animation = 'drop 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)';
             cell.appendChild(disc);
+            
             setTimeout(() => {
                 if (checkWin(row, col)) {
                     gameActive = false;
@@ -516,6 +1319,7 @@
                 }
             }, 500);
         }
+        
         function checkWin(row, col) {
             const player = board[row][col];
             return checkDirection(row, col, 0, 1, player) ||
@@ -523,6 +1327,7 @@
                    checkDirection(row, col, 1, 1, player) ||
                    checkDirection(row, col, 1, -1, player);
         }
+        
         function checkDirection(row, col, dRow, dCol, player) {
             let count = 1;
             let r = row + dRow, c = col + dCol;
@@ -531,6 +1336,7 @@
             while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === player) { count++; r -= dRow; c -= dCol; }
             return count >= 4;
         }
+        
         function highlightWinningDiscs() {
             const player = currentPlayerIndex;
             for (let r = 0; r < rows; r++) {
@@ -546,9 +1352,11 @@
                 }
             }
         }
+        
         function isBoardFull() {
             return board.every(row => row.every(cell => cell !== null));
         }
+        
         function showWinner() {
             const winner = players[currentPlayerIndex];
             document.getElementById('gameOver').classList.remove('hidden');
@@ -556,19 +1364,49 @@
             winnerEl.textContent = `${winner.name} WINS!`;
             winnerEl.style.color = winner.color;
         }
+        
         function showDraw() {
             document.getElementById('gameOver').classList.remove('hidden');
             const winnerEl = document.getElementById('winnerName');
             winnerEl.textContent = "IT'S A DRAW!";
             winnerEl.style.color = '#ccc';
         }
+        
         function resetConnect4() {
-            document.getElementById('setup').style.display = 'block';
+            if (c4GameRef) {
+                c4GameRef.off();
+                c4GameRef = null;
+            }
+            
+            c4OnlineGameId = null;
+            c4IsHost = false;
+            c4MyPlayerIndex = 0;
+            c4GameMode = 'local';
+            c4LastMove = null;
+            
+            document.getElementById('chatBox').classList.remove('active');
+            document.getElementById('chatMessages').innerHTML = '';
+            chatInitialized = false;
+            currentChatGame = null;
+            
+            document.getElementById('c4inviteLinkContainer').classList.remove('active');
+            document.getElementById('c4playerName').value = '';
+            document.getElementById('c4joinPlayerName').value = '';
+            document.getElementById('c4gameId').value = '';
+            document.getElementById('c4createSection').style.display = 'block';
+            document.getElementById('c4joinSection').style.display = 'block';
+            
+            document.getElementById('c4setup').style.display = 'block';
             document.getElementById('gameBoard').style.display = 'none';
             document.getElementById('gameOver').classList.add('hidden');
+            
+            selectC4Mode('local');
+            document.querySelectorAll('#connect4 .mode-btn')[0].click();
+            
             currentPlayerIndex = 0;
             gameActive = false;
         }
+        
         initPlayerSetup();
 
         // ===== CHESS CODE =====
@@ -576,8 +1414,13 @@
         const boardEl = document.getElementById('chessBoard');
         let isFlipped = false;
         let selectedSq = null;
-        let playVsAI = false;
+        let chessGameMode = 'local';
         let playerIsWhite = true;
+        let chessOnlineGameId = null;
+        let chessIsHost = false;
+        let chessMyColor = 'w';
+        let chessGameRef = null;
+        let lastChessMove = null;
 
         const pieceImgs = {
             'wP': 'https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/LightPawn.webp?raw=true',
@@ -596,28 +1439,184 @@
 
         const pieceValue = {p:100, n:320, b:330, r:500, q:900, k:20000};
 
-        function toggleAI() {
-            playVsAI = document.getElementById('playVsAI').checked;
-            const btn = document.getElementById('aiSideSwitch');
-            if (playVsAI) {
-                btn.style.opacity = "1";
-                btn.style.pointerEvents = "auto";
+        function selectChessMode(mode) {
+            chessGameMode = mode;
+            document.querySelectorAll('#chess .mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (mode === 'online') {
+                document.getElementById('chessMultiplayerSetup').classList.add('active');
+                document.getElementById('chessLocalSetup').style.display = 'none';
+                document.getElementById('aiControls').style.display = 'none';
+            } else if (mode === 'ai') {
+                document.getElementById('chessMultiplayerSetup').classList.remove('active');
+                document.getElementById('chessLocalSetup').style.display = 'flex';
+                document.getElementById('aiControls').style.display = 'block';
             } else {
-                btn.style.opacity = "0.5";
-                btn.style.pointerEvents = "none";
+                document.getElementById('chessMultiplayerSetup').classList.remove('active');
+                document.getElementById('chessLocalSetup').style.display = 'flex';
+                document.getElementById('aiControls').style.display = 'none';
             }
+            
             resetChess();
         }
 
+        function createChessOnlineGame() {
+            const playerName = document.getElementById('chessPlayerName').value.trim();
+            
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            chessOnlineGameId = generateGameId();
+            chessIsHost = true;
+            chessMyColor = 'w';
+            
+            chessGameRef = database.ref('chessgames/' + chessOnlineGameId);
+            
+            const gameData = {
+                white: playerName,
+                black: null,
+                fen: chess.fen(),
+                playerCount: 1,
+                lastMove: null
+            };
+            
+            chessGameRef.set(gameData).then(() => {
+                document.getElementById('chessInviteLink').textContent = chessOnlineGameId;
+                document.getElementById('chessInviteLinkContainer').classList.add('active');
+                document.getElementById('chessCreateSection').style.display = 'none';
+                document.getElementById('chessJoinSection').style.display = 'none';
+                myName = playerName;
+                
+                chessGameRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (!data) return;
+                    
+                    if (data.playerCount === 2 && document.getElementById('chessInviteLinkContainer').classList.contains('active')) {
+                        document.getElementById('chessMultiplayerSetup').style.display = 'none';
+                        document.getElementById('chessLocalSetup').style.display = 'flex';
+                        document.getElementById('chessInviteLinkContainer').classList.remove('active');
+                        setupChat('chess');
+                    }
+                    
+                    if (data.playerCount === 2) {
+                        syncChessGameState(data);
+                    }
+                });
+            });
+        }
+
+        function joinChessOnlineGame() {
+            const gameId = document.getElementById('chessGameId').value.trim().toUpperCase();
+            const playerName = document.getElementById('chessJoinPlayerName').value.trim();
+            
+            if (!playerName || !gameId) {
+                alert('Please enter your name and game code');
+                return;
+            }
+            
+            chessOnlineGameId = gameId;
+            chessIsHost = false;
+            chessMyColor = 'b';
+            
+            chessGameRef = database.ref('chessgames/' + chessOnlineGameId);
+            
+            chessGameRef.once('value').then((snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data) {
+                    alert('Game not found');
+                    return;
+                }
+                
+                if (data.playerCount >= 2) {
+                    alert('This game already has 2 players');
+                    return;
+                }
+                
+                return chessGameRef.update({
+                    black: playerName,
+                    playerCount: 2
+                });
+            }).then(() => {
+                myName = playerName;
+                document.getElementById('chessMultiplayerSetup').style.display = 'none';
+                document.getElementById('chessLocalSetup').style.display = 'flex';
+                setupChat('chess');
+                
+                chessGameRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && data.playerCount === 2) {
+                        syncChessGameState(data);
+                    }
+                });
+            });
+        }
+
+        function syncChessGameState(data) {
+            if (!data) return;
+            
+            if (data.lastMove && JSON.stringify(data.lastMove) !== JSON.stringify(lastChessMove)) {
+                lastChessMove = data.lastMove;
+                
+                if ((chessMyColor === 'w' && data.lastMove.color === 'b') || 
+                    (chessMyColor === 'b' && data.lastMove.color === 'w')) {
+                    
+                    const fromSquare = document.querySelector(`[data-square="${data.lastMove.from}"]`);
+                    const toSquare = document.querySelector(`[data-square="${data.lastMove.to}"]`);
+                    const piece = fromSquare?.querySelector('.piece');
+                    
+                    if (piece && toSquare) {
+                        const fromRect = piece.getBoundingClientRect();
+                        const toRect = toSquare.getBoundingClientRect();
+                        const dx = toRect.left - fromRect.left;
+                        const dy = toRect.top - fromRect.top;
+                        
+                        piece.classList.add('moving');
+                        piece.style.transform = `translate(${dx}px, ${dy}px)`;
+                        
+                        setTimeout(() => {
+                            chess.load(data.fen);
+                            drawBoard();
+                            document.getElementById('notation').innerHTML += `<br>${data.lastMove.san}`;
+                        }, 500);
+                    } else {
+                        chess.load(data.fen);
+                        drawBoard();
+                        document.getElementById('notation').innerHTML += `<br>${data.lastMove.san}`;
+                    }
+                } else {
+                    chess.load(data.fen);
+                }
+            } else if (data.fen) {
+                chess.load(data.fen);
+                drawBoard();
+            }
+        }
+
+        function copyChessInviteLink() {
+            const code = document.getElementById('chessInviteLink').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                event.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    event.target.textContent = 'Copy Code';
+                }, 2000);
+            });
+        }
+
         function toggleAISide() {
-            if (!playVsAI) return;
             playerIsWhite = !playerIsWhite;
-            document.getElementById('aiSideSwitch').textContent = playerIsWhite ? "You play as White (AI = Black)" : "You play as Black (AI = White)";
+            document.getElementById('aiSideSwitch').textContent = playerIsWhite 
+                ? "You play as White (AI = Black)" 
+                : "You play as Black (AI = White)";
             resetChess();
         }
 
         function makeAIMove() {
-            if (!playVsAI || chess.game_over()) return;
+            if (chessGameMode !== 'ai' || chess.game_over()) return;
+            
             const moves = chess.moves({verbose: true});
             if (moves.length === 0) return;
 
@@ -641,7 +1640,6 @@
                 }
             }
 
-            // Sliding animation
             const piece = document.querySelector(`[data-square="${bestMove.from}"] .piece`);
             if (piece) {
                 const toRect = document.querySelector(`[data-square="${bestMove.to}"]`).getBoundingClientRect();
@@ -649,7 +1647,7 @@
                 const dx = toRect.left - fromRect.left;
                 const dy = toRect.top - fromRect.top;
 
-                piece.style.transition = 'transform 0.5s ease-out';
+                piece.classList.add('moving');
                 piece.style.transform = `translate(${dx}px, ${dy}px)`;
             }
 
@@ -665,6 +1663,7 @@
             const layout = chess.board();
             const inCheck = chess.in_check();
             const turnColor = chess.turn();
+            
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const boardR = isFlipped ? 7 - r : r;
@@ -674,6 +1673,7 @@
                     sq.className = `sq ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
                     sq.dataset.square = squareName;
                     const piece = layout[boardR][boardC];
+                    
                     if (piece) {
                         const pEl = document.createElement('div');
                         pEl.className = 'piece';
@@ -693,7 +1693,7 @@
             }
             updateUI();
 
-            if (playVsAI && ((playerIsWhite && chess.turn() === 'b') || (!playerIsWhite && chess.turn() === 'w'))) {
+            if (chessGameMode === 'ai' && ((playerIsWhite && chess.turn() === 'b') || (!playerIsWhite && chess.turn() === 'w'))) {
                 setTimeout(makeAIMove, 350);
             }
         }
@@ -709,6 +1709,7 @@
             if (col < 0 || col > 7 || row < 0 || row > 7) return null;
             return String.fromCharCode(97 + col) + (8 - row);
         }
+
         function showHints(sq) {
             clearHints();
             selectedSq = sq;
@@ -722,20 +1723,36 @@
                 }
             });
         }
+
         function clearHints() {
             document.querySelectorAll('.hint').forEach(h => h.remove());
             selectedSq = null;
         }
+
         function makeMove(from, to) {
+            if (chessGameMode === 'online' && chess.turn() !== chessMyColor) {
+                return false;
+            }
+            
             const move = chess.move({ from, to, promotion: 'q' });
             if (move) {
                 document.getElementById('notation').innerHTML += `<br>${move.san}`;
                 clearHints();
+                
+                if (chessGameMode === 'online') {
+                    lastChessMove = { from, to, san: move.san, color: move.color };
+                    chessGameRef.update({
+                        fen: chess.fen(),
+                        lastMove: lastChessMove
+                    });
+                }
+                
                 drawBoard();
                 return true;
             }
             return false;
         }
+
         function updateUI() {
             if (chess.in_checkmate()) {
                 const winner = chess.turn() === 'w' ? "Black" : "White";
@@ -749,23 +1766,59 @@
                 document.getElementById('status').innerText = statusText;
             }
         }
+
         function resetChess() {
             chess.reset();
             isFlipped = false;
             clearHints();
-            document.getElementById('notation').innerHTML = "Moves:";
+            document.getElementById('notation').innerHTML = "Game started...";
+            
+            if (chessGameRef) {
+                chessGameRef.off();
+                chessGameRef = null;
+            }
+            
+            chessOnlineGameId = null;
+            chessIsHost = false;
+            chessMyColor = 'w';
+            lastChessMove = null;
+            
+            document.getElementById('chatBox').classList.remove('active');
+            document.getElementById('chatMessages').innerHTML = '';
+            chatInitialized = false;
+            currentChatGame = null;
+            
+            document.getElementById('chessInviteLinkContainer').classList.remove('active');
+            document.getElementById('chessPlayerName').value = '';
+            document.getElementById('chessJoinPlayerName').value = '';
+            document.getElementById('chessGameId').value = '';
+            document.getElementById('chessCreateSection').style.display = 'block';
+            document.getElementById('chessJoinSection').style.display = 'block';
+            
+            if (chessGameMode === 'online') {
+                document.getElementById('chessMultiplayerSetup').style.display = 'block';
+                document.getElementById('chessLocalSetup').style.display = 'none';
+            }
+            
             drawBoard();
         }
+
         function flipBoard() {
             isFlipped = !isFlipped;
             clearHints();
             drawBoard();
         }
+
         boardEl.addEventListener('click', (e) => {
+            if (chessGameMode === 'online' && chess.turn() !== chessMyColor) {
+                return;
+            }
+            
             const sqElement = e.target.closest('.sq');
             if (!sqElement) return;
             const squareName = sqElement.dataset.square;
             const pieceOnSquare = chess.get(squareName);
+            
             if (selectedSq) {
                 const moves = chess.moves({ square: selectedSq, verbose: true });
                 if (moves.some(m => m.to === squareName)) {
@@ -779,9 +1832,15 @@
                 showHints(squareName);
             }
         });
+
         interact('.piece').draggable({
             listeners: {
                 start(event) {
+                    if (chessGameMode === 'online' && chess.turn() !== chessMyColor) {
+                        event.interaction.stop();
+                        return;
+                    }
+                    
                     if (chess.turn() !== event.target.dataset.color) {
                         event.interaction.stop();
                         return;
@@ -815,7 +1874,88 @@
                 }
             }
         });
+
         drawBoard();
+
+        // ===== CHAT CODE =====
+        const chatBox = document.getElementById('chatBox');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        let myName = '';
+        let chatInitialized = false;
+        let currentChatGame = null;
+        
+        function setupChat(game) {
+            if (chatInitialized && currentChatGame === game) return;
+            
+            chatInitialized = true;
+            currentChatGame = game;
+            
+            document.getElementById('chatBox').classList.add('active');
+            document.getElementById('chatTitle').textContent = game === 'c4' ? 'Connect 4 Chat' : 'Chess Chat';
+            document.getElementById('chatMessages').innerHTML = '';
+            
+            const gameRef = game === 'c4' ? c4GameRef : chessGameRef;
+            
+            if (gameRef) {
+                gameRef.child('chat').off();
+                gameRef.child('chat').on('child_added', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const isOwn = data.sender === myName;
+                        displayMessage(data, isOwn);
+                    }
+                });
+            }
+        }
+        
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            const gameRef = currentChatGame === 'c4' ? c4GameRef : chessGameRef;
+            
+            if (!gameRef) return;
+            
+            const chatData = {
+                sender: myName,
+                message: message,
+                timestamp: Date.now()
+            };
+            
+            gameRef.child('chat').push(chatData);
+            chatInput.value = '';
+        }
+        
+        function displayMessage(data, isOwn) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-message ${isOwn ? 'own' : 'other'}`;
+            
+            if (!isOwn) {
+                const senderDiv = document.createElement('div');
+                senderDiv.className = 'chat-sender';
+                senderDiv.textContent = data.sender;
+                msgDiv.appendChild(senderDiv);
+            }
+            
+            const textDiv = document.createElement('div');
+            textDiv.className = 'chat-text';
+            textDiv.textContent = data.message;
+            msgDiv.appendChild(textDiv);
+            
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function toggleChat() {
+            chatBox.classList.toggle('minimized');
+        }
     </script>
 </body>
 </html>
