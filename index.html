@@ -526,47 +526,62 @@
             display: block;
         }
 
+        /* --- RESUME STYLES (fits A4/US letter perfectly) --- */
         .resume-content {
-            padding: 40px;
+            padding: 24px 32px;
             max-width: 8.5in;
             margin: 0 auto;
+            background: #f3f3f3;
         }
 
         .resume-container {
             background: white;
-            padding: 40px;
+            padding: 32px 36px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 14px;
+            line-height: 1.5;
+            color: #1e1e1e;
         }
 
-        .resume-header { text-align: center; margin-bottom: 25px; }
-        .resume-name { font-size: 28px; font-weight: bold; margin: 0; color: #333; }
-        .contact-info { font-size: 14px; margin: 5px 0; color: #333; }
+        .resume-header { text-align: center; margin-bottom: 20px; }
+        .resume-name { font-size: 28px; font-weight: 700; margin: 0 0 4px 0; color: #111; letter-spacing: -0.02em; }
+        .contact-info { font-size: 14px; margin: 0; color: #222; }
 
         .section-title {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             text-transform: uppercase;
             border-bottom: 2px solid #000;
             padding-bottom: 4px;
             margin-top: 20px;
-            margin-bottom: 15px;
-            color: #333;
+            margin-bottom: 12px;
+            color: #111;
+            letter-spacing: 0.02em;
         }
 
-        .section-content { font-size: 14px; color: #333; line-height: 1.6; }
-        .resume-container ul { padding-left: 20px; list-style-type: disc; }
-        .resume-container li { margin-bottom: 5px; }
-        .experience-item { margin-bottom: 20px; }
-        .item-header { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; flex-wrap: wrap; gap: 8px; }
-        .item-title { font-weight: bold; }
-        .item-location-date { text-align: right; font-style: italic; color: #555; }
+        .section-content { font-size: 14px; color: #1e1e1e; line-height: 1.6; }
+        .resume-container ul { padding-left: 20px; list-style-type: disc; margin: 6px 0 8px 0; }
+        .resume-container li { margin-bottom: 3px; }
+        .experience-item { margin-bottom: 18px; }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; flex-wrap: wrap; gap: 4px 12px; }
+        .item-title { font-weight: 700; }
+        .item-location-date { text-align: right; font-style: italic; color: #333; font-size: 13px; }
         .company-info { font-style: italic; }
-        .company-url { font-size: 12px; color: #555; }
-        .gpa { padding-left: 20px; }
+        .company-url { font-size: 12px; color: #1a5a9c; word-break: break-all; }
+        .gpa { padding-left: 20px; margin-top: 2px; }
+        .gpa li { margin-bottom: 0; }
         .expertise-container { display: flex; justify-content: space-between; flex-wrap: wrap; }
-        .expertise-column { width: 48%; min-width: 200px; }
-        .resume-banner { width: 100%; max-width: 800px; margin: 0 auto 20px; display: block; }
+        .expertise-column { width: 48%; min-width: 180px; }
+        .resume-banner { width: 100%; max-width: 600px; margin: 0 auto 16px; display: block; border-radius: 6px; }
 
+        /* --- preserve PDF-friendly sizing --- */
+        @media print {
+            .resume-content { padding: 0 !important; max-width: 100%; }
+            .resume-container { box-shadow: none !important; padding: 0.5in 0.4in !important; }
+            .window-content { background: white !important; }
+        }
+
+        /* --- other apps --- */
         .calculator {
             background: #202020;
             height: 100%;
@@ -1131,7 +1146,6 @@
                 <span>Resume</span>
             </div>
 
-            <!-- Games Icon - Opens in new tab to ryanward.org/games -->
             <div class="desktop-icon" onclick="window.open('https://ryanward.org/games', '_blank')">
                 <div class="icon">
                     <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true" alt="Games" style="width:48px;height:48px;object-fit:contain;border-radius:6px;">
@@ -1236,7 +1250,6 @@
                     </div>
                     <span>Resume</span>
                 </div>
-                <!-- Games in Start Menu - Opens in new tab -->
                 <div class="pinned-app" onclick="window.open('https://ryanward.org/games', '_blank'); toggleStartMenu();">
                     <div class="icon">
                         <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true" alt="Games" style="width:32px;height:32px;object-fit:contain;border-radius:4px;">
@@ -1288,7 +1301,7 @@
             </div>
         </div>
 
-        <!-- Resume Window -->
+        <!-- ======== RESUME WINDOW (PDF‑friendly) ======== -->
         <div class="window" id="resumeWindow" data-app="resume" style="width: 850px; height: 550px; top: 40px; left: 80px;">
             <div class="resizer resizer-n"></div><div class="resizer resizer-e"></div><div class="resizer resizer-s"></div><div class="resizer resizer-w"></div>
             <div class="resizer resizer-ne"></div><div class="resizer resizer-nw"></div><div class="resizer resizer-se"></div><div class="resizer resizer-sw"></div>
@@ -1701,7 +1714,6 @@
             <div class="taskbar-btn" id="taskbar-resume" onclick="focusWindow('resume')">
                 <svg width="20" height="20" viewBox="0 0 48 48"><path d="M12 4h16l12 12v28a2 2 0 01-2 2H12a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#4A9FD4"/></svg>
             </div>
-            <!-- Games Taskbar Button - Opens in new tab -->
             <div class="taskbar-btn" id="taskbar-games" onclick="window.open('https://ryanward.org/games', '_blank')" title="Games">
                 <img src="https://github.com/zryzenzzzz/ryanward.org/blob/main/Chess/chessconnect4logo.png?raw=true" alt="Games" style="width:20px;height:20px;object-fit:contain;border-radius:3px;">
             </div>
