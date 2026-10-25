@@ -1,7 +1,15 @@
 name: Deploy site to GitHub Pages
 
 on:
+  # Allow a direct deploy on every site change.
   push:
+    branches: [main]
+  # The repository's existing Pages setting still runs the legacy branch
+  # deploy on pushes. Run again after it finishes so the generated shell is
+  # always the last version published, without requiring a manual setting change.
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -16,10 +24,13 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Check out site
         uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Build published site from index.html
@@ -30,6 +41,7 @@ jobs:
           path: _site
 
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
